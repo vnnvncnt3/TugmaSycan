@@ -1,0 +1,84 @@
+{% load static %}
+{# Forward-compatible: "as" lookups return '' (no error) for pages that are not built yet. #}
+{% url 'dashboard:dashboard' as dashboard_url %}
+{% url 'resumes:batch_list' as resumes_url %}
+{% url 'job_requirements:list' as requirements_url %}
+{% url 'skills:list' as skills_url %}
+{% url 'search_history:history' as history_url %}
+{% with app=request.resolver_match.app_name %}
+<aside class="icon-sidebar" id="iconSidebar" aria-label="Main navigation">
+  <div class="sidebar-head">
+    <button type="button" class="sidebar-toggle" id="sidebarToggle" data-sidebar-toggle aria-label="Toggle navigation" aria-controls="iconSidebar" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a class="sidebar-brand sidebar-label" href="{% url 'home:home' %}">
+      <img class="sidebar-logo" src="{% static 'images/home/logo.png' %}" alt="">
+      <span>TugmaSycan</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav" aria-label="Workspace">
+    <p class="sidebar-group sidebar-label">Workspace</p>
+
+    {% if dashboard_url %}
+    <a href="{{ dashboard_url }}" title="Dashboard" class="sidebar-link {% if app == 'dashboard' %}sidebar-link--active{% endif %}" {% if app == 'dashboard' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
+      <span class="sidebar-label">Dashboard</span>
+    </a>
+    {% endif %}
+
+    {% if resumes_url %}
+    <a href="{{ resumes_url }}" title="Resumes" class="sidebar-link {% if app == 'resumes' %}sidebar-link--active{% endif %}" {% if app == 'resumes' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg></span>
+      <span class="sidebar-label">Resumes</span>
+    </a>
+    {% endif %}
+
+    {% if requirements_url %}
+    <a href="{{ requirements_url }}" title="Requirements" class="sidebar-link {% if app == 'job_requirements' %}sidebar-link--active{% endif %}" {% if app == 'job_requirements' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.5 1.5L7 5M3.5 12l1.5 1.5L7 11M3.5 18l1.5 1.5L7 17"/></svg></span>
+      <span class="sidebar-label">Requirements</span>
+    </a>
+    {% endif %}
+
+    {% if skills_url %}
+    <a href="{{ skills_url }}" title="Skills library" class="sidebar-link {% if app == 'skills' %}sidebar-link--active{% endif %}" {% if app == 'skills' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2.6A2 2 0 0011.2 2H4a2 2 0 00-2 2v7.2a2 2 0 00.6 1.4l8.7 8.7a2.4 2.4 0 003.4 0l6.6-6.6a2.4 2.4 0 000-3.4z"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/></svg></span>
+      <span class="sidebar-label">Skills library</span>
+    </a>
+    {% endif %}
+
+    {% if history_url %}
+    <a href="{{ history_url }}" title="Screenings" class="sidebar-link {% if app == 'search_history' or app == 'scoring' %}sidebar-link--active{% endif %}" {% if app == 'search_history' or app == 'scoring' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
+      <span class="sidebar-label">Screenings</span>
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="{% url 'user_profile:profile' %}" title="Profile" class="sidebar-user {% if app == 'user_profile' %}sidebar-user--active{% endif %}" {% if app == 'user_profile' %}aria-current="page"{% endif %}>
+      <span class="sidebar-avatar">{% if request.user.avatar %}<img src="{{ request.user.avatar.url }}" alt="">{% else %}{{ request.user.first_name|slice:":1"|upper|default:"?" }}{% endif %}</span>
+      <span class="sidebar-label sidebar-user-text">
+        <span class="sidebar-user-name">{{ request.user.first_name|default:request.user.email }}</span>
+        <span class="sidebar-user-sub">View profile</span>
+      </span>
+    </a>
+    <a href="{% url 'user_settings:settings' %}" title="Settings" class="sidebar-link {% if app == 'user_settings' %}sidebar-link--active{% endif %}" {% if app == 'user_settings' %}aria-current="page"{% endif %}>
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h11M20 6h0M4 12h5M14 12h6M4 18h12M20 18h0"/><circle cx="17" cy="6" r="2"/><circle cx="11" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+      <span class="sidebar-label">Settings</span>
+    </a>
+    <a href="{% url 'home:home' %}" title="Back to site" class="sidebar-link">
+      <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>
+      <span class="sidebar-label">Back to site</span>
+    </a>
+    <form method="post" action="{% url 'login:logout' %}" class="sidebar-logout-form">
+      {% csrf_token %}
+      <button type="submit" class="sidebar-link sidebar-logout" title="Log out">
+        <span class="sidebar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
+        <span class="sidebar-label">Log out</span>
+      </button>
+    </form>
+  </div>
+</aside>
+{% endwith %}

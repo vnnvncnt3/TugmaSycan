@@ -1,0 +1,75 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Resume batches{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/resumes/resumes.css' %}">{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Resume batches</h1>
+    <p class="page-subtext">Each upload is stored as one batch, so you can review, screen or remove it as a unit.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn--primary" href="{% url 'resumes:upload' %}">Upload resumes</a>
+  </div>
+</header>
+
+<section class="panel panel--flush">
+  <form class="toolbar" method="get" role="search">
+    <div class="chip-row" role="group" aria-label="Filter by status">
+      <a class="chip {% if not current_status %}chip--active{% endif %}" href="?{% if q %}q={{ q|urlencode }}{% endif %}">All</a>
+      {% for code, label in status_choices %}
+        <a class="chip {% if current_status == code %}chip--active{% endif %}" href="?status={{ code }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+    <div class="toolbar-end">
+      {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+      <label class="visually-hidden" for="batch-search">Search batches</label>
+      <input type="search" id="batch-search" name="q" value="{{ q }}" placeholder="Search batch name">
+      <button type="submit" class="btn btn--secondary btn--sm">Search</button>
+    </div>
+  </form>
+
+  {% if page_obj.object_list %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Batch</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="num">Resumes</th>
+            <th scope="col" class="num">Need attention</th>
+            <th scope="col">Uploaded</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for batch in page_obj %}
+            <tr>
+              <td><a class="row-link" href="{% url 'resumes:batch_detail' batch.pk %}">{{ batch.batch_name }}</a></td>
+              <td><span class="badge badge--batch-{{ batch.status|lower }}">{{ batch.get_status_display }}</span></td>
+              <td class="num">{{ batch.resume_count }}</td>
+              <td class="num">{% if batch.attention_count %}<span class="badge badge--bad">{{ batch.attention_count }}</span>{% else %}0{% endif %}</td>
+              <td>{{ batch.upload_at|date:"M j, Y" }}<span class="cell-sub">{{ batch.upload_at|time:"g:i A" }}</span></td>
+              <td><a class="link" href="{% url 'resumes:batch_detail' batch.pk %}">Open</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include '_pagination.html' %}
+  {% elif has_filters %}
+    <div class="empty">
+      <h3>No batches match your filters</h3>
+      <p>Try a different status or clear the search.</p>
+      <a class="btn btn--secondary" href="{% url 'resumes:batch_list' %}">Clear filters</a>
+    </div>
+  {% else %}
+    <div class="empty">
+      <h3>No resume batches yet</h3>
+      <p>Upload PDF or DOCX resumes to create your first batch.</p>
+      <a class="btn btn--primary" href="{% url 'resumes:upload' %}">Upload resumes</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

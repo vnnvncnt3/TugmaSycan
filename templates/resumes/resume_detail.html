@@ -1,0 +1,127 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Candidate #{{ resume.pk }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/resumes/resumes.css' %}">{% endblock %}
+
+{% block content %}
+<div data-fair-scope class="{% if fair_default %}fair-on{% endif %}">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{% url 'resumes:batch_list' %}">Resume batches</a><span aria-hidden="true">/</span>
+    <a href="{% url 'resumes:batch_detail' resume.batch.pk %}">{{ resume.batch.batch_name }}</a><span aria-hidden="true">/</span>
+    <span><span class="pii-real">{{ resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ resume.pk }}</span></span>
+  </nav>
+
+  <header class="page-head">
+    <div>
+      <h1>
+        <span><span class="pii-real">{{ resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ resume.pk }}</span></span>
+        <span class="badge badge--resume-{{ resume.status|lower }}">{{ resume.get_status_display }}</span>
+      </h1>
+      <p class="page-subtext">Data extracted from this resume. Review it before relying on any score.</p>
+    </div>
+    <div class="page-actions">
+      <label class="switch" title="Hides names, emails and file names on this page">
+        <input type="checkbox" data-fair-toggle {% if fair_default %}checked{% endif %}>
+        <span class="switch-track" aria-hidden="true"></span>
+        <span>Fair Review</span>
+      </label>
+      <a class="btn btn--secondary" href="{% url 'resumes:batch_detail' resume.batch.pk %}">Back to batch</a>
+    </div>
+  </header>
+
+  {% if resume.status == resume.Status.UPLOADED %}
+    <div class="stub-note" style="margin-bottom:24px">
+      <strong>Placeholder</strong>
+      Extraction is not connected yet, so the sections below are empty. They will fill in once this resume is parsed.
+    </div>
+  {% elif resume.status == resume.Status.FAILED or resume.status == resume.Status.REJECTED %}
+    <div class="stub-note" style="margin-bottom:24px">
+      <strong>{{ resume.get_status_display }}</strong>
+      This file could not be read. Scanned PDFs without a text layer are not supported.
+    </div>
+  {% endif %}
+
+  <div class="resume-grid">
+    <div>
+      <section class="panel" aria-labelledby="skills-title">
+        <h2 class="panel-title" id="skills-title">Skills</h2>
+        {% if resume_skills %}
+          <ul class="tag-list">{% for item in resume_skills %}<li class="tag">{{ item.skill.skill_name }}</li>{% endfor %}</ul>
+        {% else %}
+          <p class="field-hint">No skills extracted yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="panel" aria-labelledby="exp-title">
+        <h2 class="panel-title" id="exp-title">Experience</h2>
+        {% if experience %}
+          <ul class="entry-list">
+            {% for item in experience %}
+              <li class="entry">
+                <p class="entry-title">{{ item.title }} · {{ item.company }}</p>
+                <p class="entry-meta">{{ item.start_date|date:"M Y"|default:"?" }} – {{ item.end_date|date:"M Y"|default:"Present" }}</p>
+                {% if item.description %}<p class="entry-text">{{ item.description }}</p>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="field-hint">No experience extracted yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="panel" aria-labelledby="edu-title">
+        <h2 class="panel-title" id="edu-title">Education</h2>
+        {% if education %}
+          <ul class="entry-list">
+            {% for item in education %}
+              <li class="entry">
+                <p class="entry-title">{{ item.degree }}{% if item.field_of_study %}, {{ item.field_of_study }}{% endif %}</p>
+                <p class="entry-meta">{{ item.institution }} · {{ item.start_date|date:"Y"|default:"?" }} – {{ item.end_date|date:"Y"|default:"Present" }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="field-hint">No education extracted yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="panel" aria-labelledby="cert-title">
+        <h2 class="panel-title" id="cert-title">Certifications</h2>
+        {% if certifications %}
+          <ul class="entry-list">
+            {% for item in certifications %}
+              <li class="entry">
+                <p class="entry-title">{{ item.certificate_name }}</p>
+                <p class="entry-meta">{% if item.certificate_issuer %}{{ item.certificate_issuer }}{% endif %}{% if item.date_obtained %} · {{ item.date_obtained|date:"M Y" }}{% endif %}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="field-hint">No certifications extracted yet.</p>
+        {% endif %}
+      </section>
+
+      <details class="panel">
+        <summary>Extracted text</summary>
+        {% if resume.raw_text %}
+          <pre class="raw-text pii-real">{{ resume.raw_text }}</pre>
+          <p class="pii-mask field-hint" style="margin-top:16px">Hidden while Fair Review is on.</p>
+        {% else %}
+          <p class="field-hint" style="margin-top:12px">No text extracted yet.</p>
+        {% endif %}
+      </details>
+    </div>
+
+    <aside class="panel" aria-labelledby="overview-title">
+      <h2 class="panel-title" id="overview-title">Overview</h2>
+      <dl class="meta" style="grid-template-columns:1fr">
+        <div><dt>Email</dt><dd><span class="pii-real">{{ resume.candidate_email|default:"Not extracted" }}</span><span class="pii-mask">Hidden</span></dd></div>
+        <div><dt>File</dt><dd><span class="pii-real">{{ resume.file_name }}</span><span class="pii-mask">Hidden</span></dd></div>
+        <div><dt>Batch</dt><dd><a class="link" href="{% url 'resumes:batch_detail' resume.batch.pk %}">{{ resume.batch.batch_name }}</a></dd></div>
+        <div><dt>Uploaded</dt><dd>{{ resume.batch.upload_at|date:"M j, Y" }}</dd></div>
+        <div><dt>Status</dt><dd>{{ resume.get_status_display }}</dd></div>
+      </dl>
+    </aside>
+  </div>
+</div>
+{% endblock %}

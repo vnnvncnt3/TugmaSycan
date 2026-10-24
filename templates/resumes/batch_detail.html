@@ -1,0 +1,105 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}{{ batch.batch_name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/resumes/resumes.css' %}">{% endblock %}
+
+{% block content %}
+<div data-fair-scope class="{% if fair_default %}fair-on{% endif %}">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{% url 'resumes:batch_list' %}">Resume batches</a><span aria-hidden="true">/</span><span>{{ batch.batch_name }}</span>
+  </nav>
+  <header class="page-head">
+    <div>
+      <h1>{{ batch.batch_name }} <span class="badge badge--batch-{{ batch.status|lower }}">{{ batch.get_status_display }}</span></h1>
+      <p class="page-subtext">Uploaded {{ batch.upload_at|date:"M j, Y" }} at {{ batch.upload_at|time:"g:i A" }}.</p>
+    </div>
+    <div class="page-actions">
+      <a class="btn btn--secondary" href="{% url 'resumes:upload' %}">Upload another batch</a>
+      <form method="post" action="{% url 'resumes:batch_delete' batch.pk %}" data-confirm="Delete this batch and all of its resumes? This cannot be undone.">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Delete batch</button>
+      </form>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Batch totals">
+    <div class="kpi"><p class="kpi-value">{{ stats.total }}</p><p class="kpi-label">Resumes</p></div>
+    <div class="kpi"><p class="kpi-value">{{ stats.parsed }}</p><p class="kpi-label">Parsed</p></div>
+    <div class="kpi"><p class="kpi-value">{{ stats.attention }}</p><p class="kpi-label">Need attention</p></div>
+  </section>
+
+  {% if batch.status == 'PR' %}
+    <div class="stub-note" style="margin-top:24px">
+      <strong>Placeholder</strong>
+      This batch is still marked Processing because extraction is not connected yet. Statuses will update automatically once it is.
+    </div>
+  {% endif %}
+
+  <section class="panel panel--flush" style="margin-top:24px">
+    <form class="toolbar" method="get" role="search">
+      <div class="chip-row" role="group" aria-label="Filter by status">
+        <a class="chip {% if not current_status %}chip--active{% endif %}" href="?{% if q %}q={{ q|urlencode }}{% endif %}">All</a>
+        {% for code, label in status_choices %}
+          <a class="chip {% if current_status == code %}chip--active{% endif %}" href="?status={{ code }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}">{{ label }}</a>
+        {% endfor %}
+      </div>
+      <div class="toolbar-end">
+        <label class="switch" title="Hides names, emails and file names on this page">
+          <input type="checkbox" data-fair-toggle {% if fair_default %}checked{% endif %}>
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Fair Review</span>
+        </label>
+        {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+        <label class="visually-hidden" for="resume-search">Search resumes</label>
+        <input type="search" id="resume-search" name="q" value="{{ q }}" placeholder="Search name or email">
+        <button type="submit" class="btn btn--secondary btn--sm">Search</button>
+      </div>
+    </form>
+
+    {% if page_obj.object_list %}
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Candidate</th>
+              <th scope="col">File</th>
+              <th scope="col" class="num">Skills found</th>
+              <th scope="col">Status</th>
+              <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for resume in page_obj %}
+              <tr>
+                <td>
+                  <a class="row-link" href="{% url 'resumes:resume_detail' resume.pk %}">
+                    <span class="pii-real">{{ resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ resume.pk }}</span>
+                  </a>
+                  <span class="cell-sub"><span class="pii-real">{{ resume.candidate_email|default:"No email extracted" }}</span><span class="pii-mask">Email hidden</span></span>
+                </td>
+                <td><span class="pii-real">{{ resume.file_name }}</span><span class="pii-mask">File hidden</span></td>
+                <td class="num">{{ resume.skill_count }}</td>
+                <td><span class="badge badge--resume-{{ resume.status|lower }}">{{ resume.get_status_display }}</span></td>
+                <td><a class="link" href="{% url 'resumes:resume_detail' resume.pk %}">View</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% include '_pagination.html' %}
+    {% elif has_filters %}
+      <div class="empty">
+        <h3>No resumes match your filters</h3>
+        <p>Try a different status or clear the search.</p>
+        <a class="btn btn--secondary" href="{% url 'resumes:batch_detail' batch.pk %}">Clear filters</a>
+      </div>
+    {% else %}
+      <div class="empty">
+        <h3>This batch has no resumes</h3>
+        <p>Upload a new batch to add resumes.</p>
+        <a class="btn btn--primary" href="{% url 'resumes:upload' %}">Upload resumes</a>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

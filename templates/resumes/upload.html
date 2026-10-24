@@ -1,0 +1,65 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Upload resumes{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/resumes/resumes.css' %}">{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'resumes:batch_list' %}">Resume batches</a><span aria-hidden="true">/</span><span>Upload</span>
+</nav>
+<header class="page-head">
+  <div>
+    <h1>Upload resumes</h1>
+    <p class="page-subtext">Add a group of resumes as one batch. You can screen them against any saved requirement later.</p>
+  </div>
+</header>
+
+<div class="upload-grid">
+  <form class="panel" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+
+    <div class="field">
+      <label for="{{ form.batch_name.id_for_label }}">{{ form.batch_name.label }}</label>
+      {{ form.batch_name }}
+      {% for error in form.batch_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      <p class="field-hint">A short label such as the role or intake you are hiring for.</p>
+    </div>
+
+    <div class="field">
+      <span class="field-label" id="files-label">{{ form.files.label }}</span>
+      <div class="dropzone" data-dropzone data-accept="{{ accept }}" data-max-mb="{{ max_mb }}">
+        {{ form.files }}
+        <p class="dropzone-title">Drag files here, or click to browse</p>
+        <p class="dropzone-hint">{{ allowed_extensions }} · up to {{ max_mb }} MB each · {{ max_files }} files per batch</p>
+      </div>
+      <p class="file-summary" data-file-summary aria-live="polite"></p>
+      <ul class="file-list" data-file-list></ul>
+      {% for error in form.files.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+
+    <div class="form-actions">
+      <a class="btn btn--secondary" href="{% url 'resumes:batch_list' %}">Cancel</a>
+      <button type="submit" class="btn btn--primary">Upload batch</button>
+    </div>
+  </form>
+
+  <aside class="panel" aria-labelledby="after-title">
+    <h2 class="panel-title" id="after-title">What happens next</h2>
+    <ol class="flow-list">
+      <li><div><strong>Upload</strong><span>Files are saved and grouped into your batch.</span></div></li>
+      <li><div><strong>Extract</strong><span>Skills, education, certifications and experience are read from each resume.</span></div></li>
+      <li><div><strong>Score</strong><span>Each candidate is matched against the requirement you choose.</span></div></li>
+      <li><div><strong>Rank</strong><span>You get an ordered list with a per-criterion breakdown.</span></div></li>
+    </ol>
+    <ul class="spec-list">
+      <li>Scanned PDFs without a text layer cannot be read.</li>
+      <li>Rejected or unreadable files are flagged per resume.</li>
+    </ul>
+    <div class="stub-note" style="margin-top:20px">
+      <strong>Placeholder</strong>
+      Extraction and scoring are not connected yet. Uploaded resumes stay in “Uploaded” status until that backend is added.
+    </div>
+  </aside>
+</div>
+{% endblock %}
