@@ -1,0 +1,77 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Skills library{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/skills/skills.css' %}">{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Skills library</h1>
+    <p class="page-subtext">One shared keyword list used to tag resumes and to define job requirements. Skills, certifications and languages all live here.</p>
+  </div>
+</header>
+
+<form class="panel add-skill" method="post" novalidate>
+  {% csrf_token %}
+  <div class="field">
+    <label for="{{ form.skill_name.id_for_label }}">{{ form.skill_name.label }}</label>
+    <div class="add-skill-row">
+      {{ form.skill_name }}
+      <button type="submit" class="btn btn--primary">Add skill</button>
+    </div>
+    {% for error in form.skill_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    <p class="field-hint">Everyone using TugmaSycan sees the same list. Names are matched ignoring upper and lower case.</p>
+  </div>
+</form>
+
+<section class="panel panel--flush">
+  <form class="toolbar" method="get" role="search">
+    <div class="chip-row" role="group" aria-label="Filter skills">
+      <a class="chip {% if not scope %}chip--active{% endif %}" href="?{% if q %}q={{ q|urlencode }}{% endif %}">All ({{ total_skills }})</a>
+      <a class="chip {% if scope == 'resumes' %}chip--active{% endif %}" href="?scope=resumes{% if q %}&amp;q={{ q|urlencode }}{% endif %}">In my resumes</a>
+      <a class="chip {% if scope == 'requirements' %}chip--active{% endif %}" href="?scope=requirements{% if q %}&amp;q={{ q|urlencode }}{% endif %}">In my requirements</a>
+    </div>
+    <div class="toolbar-end">
+      {% if scope %}<input type="hidden" name="scope" value="{{ scope }}">{% endif %}
+      <label class="visually-hidden" for="skill-search">Search skills</label>
+      <input type="search" id="skill-search" name="q" value="{{ q }}" placeholder="Search skills">
+      <button type="submit" class="btn btn--secondary btn--sm">Search</button>
+    </div>
+  </form>
+
+  {% if page_obj.object_list %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Skill</th>
+            <th scope="col" class="num">In my resumes</th>
+            <th scope="col" class="num">In my requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for skill in page_obj %}
+            <tr>
+              <td>{{ skill.skill_name }}</td>
+              <td class="num">{{ skill.resume_count }}</td>
+              <td class="num">{{ skill.requirement_count }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include '_pagination.html' %}
+  {% elif has_filters %}
+    <div class="empty">
+      <h3>No skills match your filters</h3>
+      <p>Try a different search, or add it to the library above.</p>
+      <a class="btn btn--secondary" href="{% url 'skills:list' %}">Clear filters</a>
+    </div>
+  {% else %}
+    <div class="empty">
+      <h3>The library is empty</h3>
+      <p>Add your first skill above. You can also type new skills straight into a job requirement and they will appear here.</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

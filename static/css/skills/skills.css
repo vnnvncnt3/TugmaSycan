@@ -1,0 +1,5 @@
+.add-skill { margin-bottom: 24px; }
+.add-skill .field { margin-bottom: 0; }
+.add-skill-row { display: flex; gap: 12px; align-items: stretch; }
+.add-skill-row input { flex: 1; min-width: 0; }
+@media (max-width: 640px) { .add-skill-row { flex-direction: column; } }

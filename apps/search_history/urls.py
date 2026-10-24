@@ -4,5 +4,5 @@ from . import views
 app_name = 'search_history'
 
 urlpatterns = [
-    path('history/', views.history_view, name='history'),
+    path('', views.history_view, name='history'),
 ]
