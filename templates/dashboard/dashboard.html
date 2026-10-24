@@ -88,7 +88,7 @@
           <thead><tr><th scope="col">Requirement</th><th scope="col">Created</th></tr></thead>
           <tbody>
             {% for req in recent_requirements %}
-              <tr><td>{{ req.title }}</td><td>{{ req.created_at|date:"M j, Y" }}</td></tr>
+              <tr><td><a class="row-link" href="{% url 'job_requirements:detail' req.pk %}">{{ req.title }}</a></td><td>{{ req.created_at|date:"M j, Y" }}</td></tr>
             {% endfor %}
           </tbody>
         </table>
