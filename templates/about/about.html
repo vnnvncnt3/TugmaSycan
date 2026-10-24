@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — TugmaSycan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/about/about.css' %}">
+</head>
+<body>
+  {% include '_topbar.html' %}
+
+  <section class="about-hero">
+    <h1>Built to screen on merit, not on skim-speed.</h1>
+    <p class="about-hero-subtext">TugmaSycan reads resumes the way a thorough reviewer would — if that reviewer never got tired, never skimmed, and could check every candidate against the exact same criteria. Built for recruiters, student organization leaders, and project managers who need to screen high volumes of applicants without losing track of why each one ranks where they do.</p>
+  </section>
+
+  <section class="problem-stats">
+    <h2 class="section-title">The problem it responds to</h2>
+    <div class="stat-row">
+      <div class="stat-card">
+        <h3>Hundreds of applicants, one role</h3>
+        <p>Manually reading and comparing every resume for a single opening is rarely realistic once volume climbs.</p>
+      </div>
+      <div class="stat-card">
+        <h3>Skimming misses people</h3>
+        <p>Under time pressure, reviewers default to quick scans — and quick scans overlook qualified candidates.</p>
+      </div>
+      <div class="stat-card">
+        <h3>Bias creeps in quietly</h3>
+        <p>School name, address, or how a name reads can unintentionally outweigh actual skills and experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="capabilities">
+    <h2 class="section-title">What it does</h2>
+    <ul class="capability-list">
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Upload resumes in bulk, in standard PDF or Word format</li>
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Automatic extraction of skills, education, certifications, and experience</li>
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Define the exact requirements a role needs, and score candidates against them</li>
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> A full breakdown per candidate — what was met, partially met, or missing, not just a number</li>
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> An anonymized Fair Review mode that hides identifying details during evaluation</li>
+      <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Saved search history, so a screening session can be revisited later</li>
+    </ul>
+  </section>
+
+  <section class="principles">
+    <h2 class="section-title">Principles</h2>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <h3>Transparency over black-box scoring</h3>
+        <p>Every ranking comes with a reason, not just a percentage.</p>
+      </div>
+      <div class="principle-card">
+        <h3>Honest about its limits</h3>
+        <p>Rule-based matching, not machine-learning prediction. No bias-audit model. Standard-format resumes only.</p>
+      </div>
+      <div class="principle-card">
+        <h3>Decision support, not decision-making</h3>
+        <p>TugmaSycan ranks and organizes candidates. The reviewer still decides.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-closing">
+    <p>Questions about how it works? <a href="{% url 'contact:contact' %}">Get in touch</a>.</p>
+  </section>
+
+  <footer class="footer">
+    <p class="footer-brand">TugmaSycan</p>
+    <p class="footer-tagline">Scan Resumes, Match Skills, and Rank Candidates Efficiently</p>
+    <p class="footer-copyright">© 2026 TugmaSycan.</p>
+  </footer>
+  <script src="{% static 'js/shared/base.js' %}" defer></script>
+  <script src="{% static 'js/about/about.js' %}" defer></script>
+</body>
+</html>

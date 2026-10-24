@@ -1,0 +1,136 @@
+{% load static %}
+<header class="top-bar">
+  <a href="{% url 'home:home' %}" class="brand-block">
+    <img src="{% static 'images/home/logo.png' %}" alt="TugmaSycan logo" class="brand-logo">
+  </a>
+
+  <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu" aria-expanded="false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+
+  <nav class="top-nav" id="topNav">
+    <div class="nav-item">
+      <button class="nav-trigger" type="button" data-target="features">
+        Features
+        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+    <div class="nav-item">
+      <button class="nav-trigger" type="button" data-target="roles">
+        Roles
+        <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+    <a href="{% url 'home:home' %}#how-it-works" class="nav-plain-link">How It Works</a>
+    <a href="{% url 'about:about' %}" class="nav-plain-link">About</a>
+    <a href="{% url 'contact:contact' %}" class="nav-plain-link">Contact</a>
+  </nav>
+
+  <div class="top-actions">
+    {% if user.is_authenticated %}
+      <div class="profile-menu">
+        <button class="profile-trigger" id="profileTrigger" aria-expanded="false">
+          <span class="avatar" aria-hidden="true">
+            {% if user.avatar %}
+              <img src="{{ user.avatar.url }}" alt="">
+            {% else %}
+              {{ user.first_name|first }}{{ user.last_name|first }}
+            {% endif %}
+          </span>
+          <span class="profile-name">{{ user.first_name }}</span>
+        </button>
+        <div class="profile-dropdown" id="profileDropdown">
+          <a href="{% url 'user_profile:profile' %}">Profile</a>
+          <a href="{% url 'user_settings:settings' %}">Settings</a>
+          <form method="post" action="{% url 'login:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <a href="{% url 'login:login' %}" class="btn-ghost">Sign in</a>
+      <a href="{% url 'register:register' %}" class="btn-primary btn-primary--small">Sign up</a>
+    {% endif %}
+  </div>
+</header>
+
+<div class="mega-host" id="megaHost">
+  <div class="mega-panel" data-panel="features">
+    <p class="mega-label">Features</p>
+    <div class="mega-grid">
+      <a href="{% url 'home:home' %}#skill-extraction" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Skill Extraction</span><span class="mega-desc">Pull skills, education, and experience automatically.</span></span>
+      </a>
+      <a href="{% url 'home:home' %}#requirements" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Custom Requirements</span><span class="mega-desc">Define what the role actually needs, then score against it.</span></span>
+      </a>
+      <a href="{% url 'home:home' %}#match-breakdown" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Match Breakdown</span><span class="mega-desc">See exactly what was met, partially met, or missing.</span></span>
+      </a>
+      <a href="{% url 'home:home' %}#fair-review" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Fair Review Mode</span><span class="mega-desc">Hide identifying details while reviewing rankings.</span></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="mega-panel" data-panel="roles">
+    <p class="mega-label">By role</p>
+    <div class="mega-grid mega-grid--single">
+      <a href="#" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.9"/></svg></span>
+        <span class="mega-text"><span class="mega-title">HR Managers</span><span class="mega-desc">Screen high volumes without losing track of why.</span></span>
+      </a>
+      <a href="#" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Recruiters</span><span class="mega-desc">Rank candidates against role criteria in minutes.</span></span>
+      </a>
+      <a href="#" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2 6 2s6-1 6-2v-5"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Student Org Leaders</span><span class="mega-desc">Review applications fairly, even without an HR team.</span></span>
+      </a>
+      <a href="#" class="mega-item">
+        <span class="mega-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span>
+        <span class="mega-text"><span class="mega-title">Project Managers</span><span class="mega-desc">Staff a team based on skills, not guesswork.</span></span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile off-canvas menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="nav-item-mobile" data-target="features">Features</button>
+  <div class="mobile-submenu" data-submenu="features">
+    <a href="{% url 'home:home' %}#skill-extraction">Skill Extraction</a>
+    <a href="{% url 'home:home' %}#requirements">Custom Requirements</a>
+    <a href="{% url 'home:home' %}#match-breakdown">Match Breakdown</a>
+    <a href="{% url 'home:home' %}#fair-review">Fair Review Mode</a>
+  </div>
+  <button class="nav-item-mobile" data-target="roles">Roles</button>
+  <div class="mobile-submenu" data-submenu="roles">
+    <a href="#">HR Managers</a>
+    <a href="#">Recruiters</a>
+    <a href="#">Student Org Leaders</a>
+    <a href="#">Project Managers</a>
+  </div>
+  <a href="{% url 'home:home' %}#how-it-works" class="nav-item-mobile nav-item-mobile--link">How It Works</a>
+  <a href="{% url 'about:about' %}" class="nav-item-mobile nav-item-mobile--link">About</a>
+  <a href="{% url 'contact:contact' %}" class="nav-item-mobile nav-item-mobile--link">Contact</a>
+  <div class="mobile-menu-actions">
+    {% if user.is_authenticated %}
+      <a href="{% url 'user_profile:profile' %}" class="btn-ghost">Profile</a>
+      <a href="{% url 'user_settings:settings' %}" class="btn-ghost">Settings</a>
+      <form method="post" action="{% url 'login:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary btn-primary--small">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login:login' %}" class="btn-ghost">Sign in</a>
+      <a href="{% url 'register:register' %}" class="btn-primary btn-primary--small">Sign up</a>
+    {% endif %}
+  </div>
+</div>

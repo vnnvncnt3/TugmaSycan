@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — TugmaSycan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/login/login.css' %}">
+  <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
+</head>
+<body>
+  <main class="auth-shell">
+    <aside class="auth-visual">
+      <div class="visual-content">
+        <h1>Screen Resumes.<br>Rank with Confidence.</h1>
+        <p class="visual-subtext">Scan Resumes, Match Skills, and Rank Candidates Efficiently</p>
+
+        <ul class="checklist">
+          <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Extract skills automatically</li>
+          <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Score and rank candidates</li>
+          <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Review detailed match breakdowns</li>
+          <li><span class="check-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span> Enable fair, anonymized review</li>
+        </ul>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-tag">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Bias-free screening
+        </div>
+        <div class="feature-tag">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+          Match breakdowns
+        </div>
+        <div class="feature-tag">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg>
+          Bulk processing
+        </div>
+      </div>
+    </aside>
+
+    <section class="auth-form-panel">
+      <div class="panel-header">
+        <img src="{% static 'images/home/logo.png' %}" alt="TugmaSycan logo" class="brand-logo brand-logo--panel">
+        <p class="portal-label">Recruiter Portal</p>
+      </div>
+
+      <div class="auth-card">
+        <p class="card-intro">Sign in to view candidate rankings, screenings, and match breakdowns.</p>
+
+        {% if form.non_field_errors %}
+          <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="field">
+            <label for="{{ form.username.id_for_label }}">Email</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            <div class="password-wrap">
+              {{ form.password }}
+            </div>
+            {{ form.password.errors }}
+          </div>
+          <button type="submit" class="btn-primary">Log in</button>
+        </form>
+      </div>
+
+      <p class="auth-switch">New here? <a href="{% url 'register:register' %}">Create account</a></p>
+    </section>
+  </main>
+
+  <script src="{% static 'js/login/login.js' %}" defer></script>
+</body>
+</html>

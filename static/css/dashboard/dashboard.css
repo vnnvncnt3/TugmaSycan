@@ -1,0 +1,16 @@
+.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-box { background: white; border: 1px solid rgba(34, 48, 60, 0.08); border-radius: 10px; padding: 20px; }
+.stat-number { font-size: 28px; font-weight: 600; margin: 0; color: var(--steel-blue); }
+.stat-label { font-size: 13px; color: var(--slate-gray); margin: 4px 0 0; }
+
+.dash-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+
+.dash-list { list-style: none; padding: 0; margin: 0 0 16px; display: flex; flex-direction: column; gap: 10px; }
+.dash-list li { display: flex; justify-content: space-between; font-size: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(34, 48, 60, 0.06); }
+.dash-list-meta { color: var(--slate-gray); font-size: 13px; }
+
+.empty-state { font-size: 14px; color: var(--slate-gray); margin: 0 0 16px; }
+
+@media (max-width: 900px) {
+  .stat-row, .dash-columns { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TugmaSycan — Scan, Match, Rank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+  <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
+</head>
+<body>
+  {% include '_topbar.html' %}
+
+  <section class="hero">
+    <div class="hero-text reveal">
+      <h1>Screen resumes on merit,<br>not on first impressions.</h1>
+      <p class="hero-subtext">TugmaSycan extracts skills, scores candidates against your requirements, and shows exactly why each one ranks where they do — so you spend less time skimming and more time deciding.</p>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard:dashboard' %}" class="btn-primary hero-cta">Go to Dashboard</a>
+      {% else %}
+        <a href="{% url 'register:register' %}" class="btn-primary hero-cta">View the Prototype</a>
+      {% endif %}
+    </div>
+    <div class="hero-visual reveal">
+      <!-- put image here -->
+      <div class="image-placeholder" aria-hidden="true">Product screenshot</div>
+    </div>
+  </section>
+
+  <section class="features">
+    <h2 class="section-title reveal">Everything you need to screen fairly</h2>
+
+    <div class="feature-row reveal" id="skill-extraction">
+      <div class="feature-col">
+        <!-- put image here -->
+        <div class="image-placeholder" aria-hidden="true">Skill extraction preview</div>
+      </div>
+      <div class="feature-col feature-text">
+        <h3>Automatic skill extraction</h3>
+        <div class="accent-line"></div>
+        <p>Upload standard text-based PDF or Word resumes in bulk. A pretrained NLP/NER model identifies skills, education, certifications, and experience — no manual data entry.</p>
+      </div>
+    </div>
+
+    <div class="feature-row feature-row--reverse reveal" id="requirements">
+      <div class="feature-col">
+        <!-- put image here -->
+        <div class="image-placeholder" aria-hidden="true">Custom requirements preview</div>
+      </div>
+      <div class="feature-col feature-text">
+        <h3>Requirements that match your role</h3>
+        <div class="accent-line"></div>
+        <p>Define exactly what a role needs — years of experience, certifications, language proficiency — and let that become the scoring criteria, not a generic checklist.</p>
+      </div>
+    </div>
+
+    <div class="feature-row reveal" id="match-breakdown">
+      <div class="feature-col">
+        <!-- put image here -->
+        <div class="image-placeholder" aria-hidden="true">Match breakdown preview</div>
+      </div>
+      <div class="feature-col feature-text">
+        <h3>See exactly why, not just a score</h3>
+        <div class="accent-line"></div>
+        <p>Rule-based criteria matching produces an itemized checklist — met, partially met, or missing — so every ranking is explainable rather than a black-box percentage.</p>
+      </div>
+    </div>
+
+    <div class="feature-row feature-row--reverse reveal" id="fair-review">
+      <div class="feature-col">
+        <!-- put image here -->
+        <div class="image-placeholder" aria-hidden="true">Fair Review mode preview</div>
+      </div>
+      <div class="feature-col feature-text">
+        <h3>Anonymized Fair Review mode</h3>
+        <div class="accent-line"></div>
+        <p>Toggle off names, schools, addresses, and photos while reviewing rankings — keeping the focus on qualifications, not identity.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="process" id="how-it-works">
+    <h2 class="section-title reveal">From resume to ranking in four steps</h2>
+
+    <div class="slideshow reveal" id="processSlideshow">
+      <input type="radio" name="slide" id="slide1" checked>
+      <input type="radio" name="slide" id="slide2">
+      <input type="radio" name="slide" id="slide3">
+      <input type="radio" name="slide" id="slide4">
+
+      <div class="slides-viewport">
+        <div class="slides">
+          <div class="slide">
+            <!-- put image here -->
+            <div class="image-placeholder image-placeholder--wide" aria-hidden="true">Upload step preview</div>
+            <h4>1. Upload</h4>
+            <p>Drop in resumes by the batch. Supports standard text-based PDF and Word documents.</p>
+          </div>
+          <div class="slide">
+            <!-- put image here -->
+            <div class="image-placeholder image-placeholder--wide" aria-hidden="true">Extract step preview</div>
+            <h4>2. Extract</h4>
+            <p>Skills, education, certifications, and experience get pulled out automatically.</p>
+          </div>
+          <div class="slide">
+            <!-- put image here -->
+            <div class="image-placeholder image-placeholder--wide" aria-hidden="true">Score step preview</div>
+            <h4>3. Score</h4>
+            <p>Rule-based keyword and criteria matching scores each candidate against your defined requirements.</p>
+          </div>
+          <div class="slide">
+            <!-- put image here -->
+            <div class="image-placeholder image-placeholder--wide" aria-hidden="true">Rank step preview</div>
+            <h4>4. Rank</h4>
+            <p>Candidates are ranked with a full breakdown — ready for your review.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-dots">
+        <label for="slide1" class="dot"></label>
+        <label for="slide2" class="dot"></label>
+        <label for="slide3" class="dot"></label>
+        <label for="slide4" class="dot"></label>
+      </div>
+    </div>
+  </section>
+
+    <section class="tech-stack" id="tech-stack">
+    <h2 class="section-title reveal">Under the hood</h2>
+    <div class="stack-grid">
+      <div class="stack-card reveal">
+        <h3>Backend</h3>
+        <div class="accent-line"></div>
+        <p>Django 5 handling routing, authentication, and the ORM, organized by vertical slice so each feature owns its views, templates, and assets.</p>
+      </div>
+      <div class="stack-card reveal">
+        <h3>Database</h3>
+        <div class="accent-line"></div>
+        <p>Supabase PostgreSQL, with schema managed entirely through Django migrations — a custom user model plus per-feature profile and settings tables.</p>
+      </div>
+      <div class="stack-card reveal">
+        <h3>Document parsing</h3>
+        <div class="accent-line"></div>
+        <p>Python libraries for text extraction from standard PDF and Word files. Complex or creative resume layouts are intentionally out of scope.</p>
+      </div>
+      <div class="stack-card reveal">
+        <h3>NLP extraction</h3>
+        <div class="accent-line"></div>
+        <p>A pretrained NER model tags skills, education, and certifications from extracted text. No custom-trained model — accuracy varies with resume formatting.</p>
+      </div>
+      <div class="stack-card reveal">
+        <h3>Scoring logic</h3>
+        <div class="accent-line"></div>
+        <p>Rule-based keyword and criteria matching, not semantic embedding similarity or ML prediction. Chosen deliberately to keep scope achievable in one semester.</p>
+      </div>
+      <div class="stack-card reveal">
+        <h3>Fairness approach</h3>
+        <div class="accent-line"></div>
+        <p>Rule-based anonymization hides identifying fields during review. No ML bias audit trained on historical hiring data — a stated limitation, not an oversight.</p>
+      </div>
+    </div>
+  </section>
+
+    {% if not user.is_authenticated %}
+    <section class="cta-band reveal">
+      <h2>Curious how it works under the hood?</h2>
+      <p>See the stack, the extraction pipeline, and the scoring logic that power TugmaSycan.</p>
+      <a href="#tech-stack" class="btn-primary">Explore System Architecture</a>
+    </section>
+    {% endif %}
+
+  <footer class="footer">
+    <p class="footer-brand">TugmaSycan</p>
+    <p class="footer-tagline">Scan Resumes, Match Skills, and Rank Candidates Efficiently</p>
+    <p class="footer-copyright">© 2026 TugmaSycan. Built for CSIT327.</p>
+  </footer>
+  <script src="{% static 'js/shared/base.js' %}" defer></script>
+  <script src="{% static 'js/home/home.js' %}" defer></script>
+</body>
+</html>

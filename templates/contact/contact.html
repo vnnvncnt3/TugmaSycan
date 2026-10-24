@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — TugmaSycan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/contact/contact.css' %}">
+</head>
+<body>
+  {% include '_topbar.html' %}
+
+  <main class="contact-page">
+    <h1>Get in touch</h1>
+    <p class="contact-page-subtext">TugmaSycan is a resume-screening prototype built for CSIT327. Reach out with questions about how it works, its current limitations, or feedback on the project.</p>
+
+    <form class="contact-form">
+      <div class="field">
+        <label for="contact_name">Name</label>
+        <input type="text" id="contact_name" name="name" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label for="contact_email">Email</label>
+        <input type="email" id="contact_email" name="email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label for="contact_message">Message</label>
+        <textarea id="contact_message" name="message" rows="5" placeholder="What would you like to know?"></textarea>
+      </div>
+      <button type="submit" class="btn-primary">Send message</button>
+      <p class="field-hint">This form is a UI preview for now — messages aren't sent yet.</p>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-brand">TugmaSycan</p>
+    <p class="footer-tagline">Scan Resumes, Match Skills, and Rank Candidates Efficiently</p>
+    <p class="footer-copyright">© 2026 TugmaSycan. Built for CSIT327.</p>
+  </footer>
+  <script src="{% static 'js/shared/base.js' %}" defer></script>
+  <script src="{% static 'js/contact/contact.js' %}" defer></script>
+</body>
+</html>

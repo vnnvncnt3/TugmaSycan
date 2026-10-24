@@ -1,0 +1,256 @@
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--slate-ink);
+}
+
+.auth-shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.auth-visual {
+  flex: 0 0 440px;
+  background: linear-gradient(135deg, var(--slate-ink) 0%, var(--steel-blue) 100%);
+  color: var(--fog-white);
+  padding: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.visual-content h1 {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0 0 16px;
+}
+
+.visual-subtext {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(245, 246, 247, 0.8);
+  margin: 0 0 32px;
+  max-width: 34ch;
+}
+
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.check-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 246, 247, 0.5);
+  color: var(--fog-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(245, 246, 247, 0.15);
+}
+
+.feature-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(245, 246, 247, 0.85);
+}
+
+.auth-form-panel {
+  flex: 1;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+}
+
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.portal-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-gray);
+  margin: 4px 0 0;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 540px;
+  background: white;
+  border: 1px solid rgba(34, 48, 60, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(34, 48, 60, 0.08);
+  padding: 28px 32px;
+}
+
+.card-intro {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--slate-gray);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  border: 1px solid var(--slate-gray);
+  border-radius: 4px;
+  background: white;
+  color: var(--slate-ink);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--steel-blue);
+  outline-offset: 1px;
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--slate-gray);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+}
+
+.password-toggle:hover {
+  color: var(--steel-blue);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--steel-blue);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.btn-primary:hover {
+  background: #345a76;
+}
+
+.errorlist {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  color: #B3261E;
+  font-size: 12px;
+}
+
+.form-errors {
+  color: #B3261E;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  background: rgba(179, 38, 30, 0.06);
+  border: 1px solid rgba(179, 38, 30, 0.2);
+  border-radius: 4px;
+}
+
+.auth-switch {
+  font-size: 13px;
+  color: var(--slate-gray);
+  margin-top: 20px;
+}
+
+.auth-switch a {
+  color: var(--steel-blue);
+}
+
+@media (max-width: 780px) {
+  .auth-shell { flex-direction: column; }
+  .auth-visual { flex: none; padding: 40px 28px; }
+  .field-row { flex-direction: column; gap: 0; }
+  .auth-form-panel { padding: 40px 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
