@@ -1,0 +1,73 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}{{ requirement.title }}{% endblock %}
+
+{% block content %}
+{% url 'search_history:run' as run_url %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'job_requirements:list' %}">Job requirements</a><span aria-hidden="true">/</span><span>{{ requirement.title }}</span>
+</nav>
+<header class="page-head">
+  <div>
+    <h1>{{ requirement.title }}</h1>
+    <p class="page-subtext">Created {{ requirement.created_at|date:"M j, Y" }} · {{ criteria|length }} criteri{{ criteria|length|pluralize:"on,a" }} · used in {{ screening_count }} screening{{ screening_count|pluralize }}.</p>
+  </div>
+  <div class="page-actions">
+    {% if run_url %}<a class="btn btn--primary" href="{{ run_url }}?requirement={{ requirement.pk }}">Run screening</a>{% endif %}
+    <a class="btn btn--secondary" href="{% url 'job_requirements:edit' requirement.pk %}">Edit</a>
+    {% if not screening_count %}
+      <form method="post" action="{% url 'job_requirements:delete' requirement.pk %}" data-confirm="Delete this requirement and its criteria? This cannot be undone.">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Delete</button>
+      </form>
+    {% endif %}
+  </div>
+</header>
+
+<section class="panel panel--flush" aria-labelledby="criteria-title">
+  <div class="panel-head"><h2 class="panel-title" id="criteria-title">Criteria</h2></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr><th scope="col">Type</th><th scope="col">Skill or keyword</th><th scope="col">Minimum</th><th scope="col">Note</th></tr>
+      </thead>
+      <tbody>
+        {% for c in criteria %}
+          <tr>
+            <td><span class="badge">{{ c.get_criterion_type_display }}</span></td>
+            <td>{{ c.skill.skill_name }}</td>
+            <td>{% if c.min_years %}{{ c.min_years }} year{{ c.min_years|pluralize }}{% else %}<span class="cell-sub">—</span>{% endif %}</td>
+            <td>{{ c.description|default:"—" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel panel--flush" aria-labelledby="runs-title">
+  <div class="panel-head"><h2 class="panel-title" id="runs-title">Screenings with this requirement</h2></div>
+  {% if screenings %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th scope="col">Run on</th><th scope="col" class="num">Candidates scored</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+        <tbody>
+          {% for s in screenings %}
+            {% url 'search_history:detail' s.pk as detail_url %}
+            <tr>
+              <td>{{ s.searched_at|date:"M j, Y" }}<span class="cell-sub">{{ s.searched_at|time:"g:i A" }}</span></td>
+              <td class="num">{{ s.scored_count }}</td>
+              <td>{% if detail_url %}<a class="link" href="{{ detail_url }}">View results</a>{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty empty--inline">
+      <h3>Not used in a screening yet</h3>
+      <p>{% if run_url %}Run a screening to score a batch of resumes against this requirement.{% else %}Screening runs will be listed here once that feature is connected.{% endif %}</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

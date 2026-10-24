@@ -1,0 +1,65 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Job requirements{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Job requirements</h1>
+    <p class="page-subtext">Describe a role once as a list of criteria, then reuse it to screen any batch of resumes.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn--primary" href="{% url 'job_requirements:new_requirement' %}">New requirement</a>
+  </div>
+</header>
+
+<section class="panel panel--flush">
+  <form class="toolbar" method="get" role="search">
+    <div class="toolbar-end">
+      <label class="visually-hidden" for="req-search">Search requirements</label>
+      <input type="search" id="req-search" name="q" value="{{ q }}" placeholder="Search by title">
+      <button type="submit" class="btn btn--secondary btn--sm">Search</button>
+    </div>
+  </form>
+
+  {% if page_obj.object_list %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Requirement</th>
+            <th scope="col" class="num">Criteria</th>
+            <th scope="col" class="num">Screenings</th>
+            <th scope="col">Created</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in page_obj %}
+            <tr>
+              <td><a class="row-link" href="{% url 'job_requirements:detail' req.pk %}">{{ req.title }}</a></td>
+              <td class="num">{{ req.criteria_count }}</td>
+              <td class="num">{{ req.screening_count }}</td>
+              <td>{{ req.created_at|date:"M j, Y" }}</td>
+              <td><a class="link" href="{% url 'job_requirements:detail' req.pk %}">Open</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include '_pagination.html' %}
+  {% elif q %}
+    <div class="empty">
+      <h3>No requirements match “{{ q }}”</h3>
+      <p>Check the spelling or clear the search.</p>
+      <a class="btn btn--secondary" href="{% url 'job_requirements:list' %}">Clear search</a>
+    </div>
+  {% else %}
+    <div class="empty">
+      <h3>No job requirements yet</h3>
+      <p>Create a requirement listing the skills, certifications, experience and languages you need.</p>
+      <a class="btn btn--primary" href="{% url 'job_requirements:new_requirement' %}">New requirement</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

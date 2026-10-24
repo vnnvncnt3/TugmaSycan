@@ -1,0 +1,29 @@
+{# One criterion row. Used for saved rows and for the empty template that the "Add criterion" button clones. #}
+<div class="criterion-row" data-criterion-row>
+  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
+  <div class="criterion-cell">
+    <label class="criterion-label" for="{{ form.criterion_type.id_for_label }}">Type</label>
+    {{ form.criterion_type }}
+    {% for error in form.criterion_type.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+  </div>
+  <div class="criterion-cell">
+    <label class="criterion-label" for="{{ form.skill_name.id_for_label }}">Skill or keyword</label>
+    {{ form.skill_name }}
+    {% for error in form.skill_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+  </div>
+  <div class="criterion-cell">
+    <label class="criterion-label" for="{{ form.min_years.id_for_label }}">Minimum years</label>
+    {{ form.min_years }}
+    {% for error in form.min_years.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+  </div>
+  <div class="criterion-cell">
+    <label class="criterion-label" for="{{ form.description.id_for_label }}">Note</label>
+    {{ form.description }}
+    {% for error in form.description.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+  </div>
+  <div class="criterion-cell criterion-cell--action">
+    <button type="button" class="btn btn--secondary btn--sm" data-remove-criterion>Remove</button>
+  </div>
+  {% for error in form.non_field_errors %}<p class="field-error criterion-error">{{ error }}</p>{% endfor %}
+</div>

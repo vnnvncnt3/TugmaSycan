@@ -1,0 +1,76 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}{% if is_edit %}Edit requirement{% else %}New requirement{% endif %}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/job_requirements/job_requirements.css' %}">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/job_requirements/job_requirements.js' %}" defer></script>{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'job_requirements:list' %}">Job requirements</a><span aria-hidden="true">/</span>
+  {% if is_edit %}<a href="{% url 'job_requirements:detail' requirement.pk %}">{{ requirement.title }}</a><span aria-hidden="true">/</span><span>Edit</span>{% else %}<span>New</span>{% endif %}
+</nav>
+<header class="page-head">
+  <div>
+    <h1>{% if is_edit %}Edit requirement{% else %}New requirement{% endif %}</h1>
+    <p class="page-subtext">Each criterion is one thing a candidate should have. Candidates are scored on how many they meet.</p>
+  </div>
+</header>
+
+{% if screening_count %}
+  <div class="stub-note" style="margin-bottom:24px">
+    <strong>Used in {{ screening_count }} past screening{{ screening_count|pluralize }}</strong>
+    Criteria that appear in saved results cannot be removed. You can still rename the requirement and add new criteria.
+  </div>
+{% endif %}
+
+<form method="post" novalidate data-criteria-form>
+  {% csrf_token %}
+
+  <section class="panel">
+    <div class="field" style="margin-bottom:0">
+      <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+      {{ form.title }}
+      {% for error in form.title.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+    </div>
+  </section>
+
+  <section class="panel panel--flush">
+    <div class="panel-head">
+      <h2 class="panel-title">Criteria</h2>
+    </div>
+    <ul class="type-hints">
+      <li><strong>Skill</strong> a tool or ability</li>
+      <li><strong>Certification</strong> a credential, by name</li>
+      <li><strong>Experience</strong> a skill plus minimum years</li>
+      <li><strong>Language</strong> a spoken or written language</li>
+    </ul>
+
+    {{ formset.management_form }}
+    {% for error in formset.non_form_errors %}<p class="field-error panel-body" style="padding-bottom:0">{{ error }}</p>{% endfor %}
+
+    <div class="criteria-head" aria-hidden="true">
+      <span>Type</span><span>Skill or keyword</span><span>Min. years</span><span>Note</span><span></span>
+    </div>
+    <div data-criteria-rows>
+      {% for criterion_form in formset %}{% include 'job_requirements/_criterion_row.html' with form=criterion_form %}{% endfor %}
+    </div>
+    <p class="empty empty--inline" data-criteria-empty hidden><span class="field-hint">No criteria yet. Add at least one.</span></p>
+
+    <template id="criterion-template">{% include 'job_requirements/_criterion_row.html' with form=formset.empty_form %}</template>
+
+    <div class="panel-body">
+      <button type="button" class="btn btn--secondary btn--sm" data-add-criterion>Add criterion</button>
+      <span class="field-hint" style="margin-left:12px">New keywords you type are added to the <a class="link" href="{% url 'skills:list' %}" target="_blank" rel="noopener">Skills library</a> automatically.</span>
+    </div>
+  </section>
+
+  <datalist id="skill-options">
+    {% for name in skill_options %}<option value="{{ name }}"></option>{% endfor %}
+  </datalist>
+
+  <div class="form-actions">
+    <a class="btn btn--secondary" href="{% if is_edit %}{% url 'job_requirements:detail' requirement.pk %}{% else %}{% url 'job_requirements:list' %}{% endif %}">Cancel</a>
+    <button type="submit" class="btn btn--primary">{% if is_edit %}Save changes{% else %}Save requirement{% endif %}</button>
+  </div>
+</form>
+{% endblock %}
