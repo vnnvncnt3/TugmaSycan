@@ -1,0 +1,86 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Run screening{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/resumes/resumes.css' %}">
+<link rel="stylesheet" href="{% static 'css/search_history/search_history.css' %}">
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/search_history/search_history.js' %}" defer></script>{% endblock %}
+
+{% block content %}
+<nav class="crumbs" aria-label="Breadcrumb">
+  <a href="{% url 'search_history:history' %}">Screenings</a><span aria-hidden="true">/</span><span>Run</span>
+</nav>
+<header class="page-head">
+  <div>
+    <h1>Run screening</h1>
+    <p class="page-subtext">Pick what you are hiring for and which resumes to score against it.</p>
+  </div>
+</header>
+
+<div class="upload-grid">
+  {% if not has_requirements or not batches %}
+    <section class="panel">
+      <div class="empty">
+        <h3>You need a requirement and a resume batch first</h3>
+        <p>A screening scores resumes against a requirement. {% if not has_requirements %}You have no job requirements yet. {% endif %}{% if not batches %}You have no resume batches yet.{% endif %}</p>
+        {% if not has_requirements %}<a class="btn btn--primary" href="{% url 'job_requirements:new_requirement' %}">New requirement</a>{% endif %}
+        {% if not batches %}<a class="btn {% if has_requirements %}btn--primary{% else %}btn--secondary{% endif %}" href="{% url 'resumes:upload' %}">Upload resumes</a>{% endif %}
+      </div>
+    </section>
+  {% else %}
+    <form class="panel" method="post" novalidate data-run-form>
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+
+      <div class="field">
+        <label for="{{ form.requirement.id_for_label }}">1. {{ form.requirement.label }}</label>
+        {{ form.requirement }}
+        {% for error in form.requirement.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        <p class="field-hint">Need a different one? <a class="link" href="{% url 'job_requirements:new_requirement' %}">Create a requirement</a>.</p>
+      </div>
+
+      <div class="field">
+        <div class="picker-head">
+          <span class="field-label" id="batches-label">2. Resume batches</span>
+          <button type="button" class="link link--button" data-select-all>Select all</button>
+        </div>
+        <ul class="batch-picker" aria-labelledby="batches-label">
+          {% for batch in batches %}
+            <li>
+              <label class="batch-option">
+                <input type="checkbox" name="batches" value="{{ batch.pk }}" data-resumes="{{ batch.resume_count }}" {% if batch.pk|stringformat:"s" in selected %}checked{% endif %}>
+                <span class="batch-option-main">
+                  <span class="batch-option-name">{{ batch.batch_name }}</span>
+                  <span class="cell-sub">Uploaded {{ batch.upload_at|date:"M j, Y" }}</span>
+                </span>
+                <span class="batch-option-count">{{ batch.resume_count }} resume{{ batch.resume_count|pluralize }}</span>
+              </label>
+            </li>
+          {% endfor %}
+        </ul>
+        {% for error in form.batches.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        <p class="file-summary" data-batch-summary aria-live="polite"></p>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn--secondary" href="{% url 'search_history:history' %}">Cancel</a>
+        <button type="submit" class="btn btn--primary">Run screening</button>
+      </div>
+    </form>
+  {% endif %}
+
+  <aside class="panel" aria-labelledby="how-title">
+    <h2 class="panel-title" id="how-title">How a screening works</h2>
+    <ol class="flow-list">
+      <li><div><strong>Choose</strong><span>One requirement and any of your resume batches.</span></div></li>
+      <li><div><strong>Check each criterion</strong><span>Every resume is marked Met, Partial or Missing for each criterion.</span></div></li>
+      <li><div><strong>Rank</strong><span>Candidates get a total score and are listed best match first.</span></div></li>
+    </ol>
+    <div class="stub-note">
+      <strong>Placeholder</strong>
+      Scoring is not connected yet. Running a screening saves it to your history with no scored candidates.
+    </div>
+  </aside>
+</div>
+{% endblock %}

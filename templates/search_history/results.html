@@ -1,0 +1,105 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Results: {{ requirement.title }}{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/scoring/scoring.css' %}">
+{% endblock %}
+
+{% block content %}
+<div data-fair-scope class="{% if fair_default %}fair-on{% endif %}">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{% url 'search_history:history' %}">Screenings</a><span aria-hidden="true">/</span><span>{{ requirement.title }}</span>
+  </nav>
+  <header class="page-head">
+    <div>
+      <h1>{{ requirement.title }}</h1>
+      <p class="page-subtext">Run on {{ search.searched_at|date:"M j, Y" }} at {{ search.searched_at|time:"g:i A" }} · {{ criteria_count }} criteri{{ criteria_count|pluralize:"on,a" }}. <a class="link" href="{% url 'job_requirements:detail' requirement.pk %}">View requirement</a></p>
+    </div>
+    <div class="page-actions">
+      <label class="switch" title="Hides names, emails and file names on this page">
+        <input type="checkbox" data-fair-toggle {% if fair_default %}checked{% endif %}>
+        <span class="switch-track" aria-hidden="true"></span>
+        <span>Fair Review</span>
+      </label>
+      <a class="btn btn--secondary" href="{% url 'search_history:run' %}?requirement={{ requirement.pk }}">Run again</a>
+      <form method="post" action="{% url 'search_history:delete' search.pk %}" data-confirm="Delete this screening and all of its results? This cannot be undone.">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--danger">Delete</button>
+      </form>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Screening totals">
+    <div class="kpi"><p class="kpi-value">{{ stats.total }}</p><p class="kpi-label">Candidates scored</p></div>
+    <div class="kpi"><p class="kpi-value">{% if stats.top is not None %}{{ stats.top|floatformat:1 }}{% else %}—{% endif %}</p><p class="kpi-label">Top score</p></div>
+    <div class="kpi"><p class="kpi-value">{% if stats.average is not None %}{{ stats.average|floatformat:1 }}{% else %}—{% endif %}</p><p class="kpi-label">Average score</p></div>
+  </section>
+
+  {% if not stats.total %}
+    <div class="stub-note" style="margin-top:24px">
+      <strong>Placeholder</strong>
+      No candidates have been scored for this screening because the scoring engine is not connected yet. Ranked results will appear here automatically once it is.
+    </div>
+  {% else %}
+    <section class="panel panel--flush" style="margin-top:24px">
+      <form class="toolbar" method="get" role="search">
+        <div class="toolbar-end">
+          <label class="visually-hidden" for="result-search">Search candidates</label>
+          <input type="search" id="result-search" name="q" value="{{ q }}" placeholder="Search name or email">
+          <button type="submit" class="btn btn--secondary btn--sm">Search</button>
+        </div>
+      </form>
+
+      {% if page_obj.object_list %}
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col" class="num">Rank</th>
+                <th scope="col">Candidate</th>
+                <th scope="col">Batch</th>
+                <th scope="col">Score</th>
+                <th scope="col">Criteria</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in page_obj %}
+                <tr>
+                  <td class="num">{{ s.rank }}</td>
+                  <td>
+                    <a class="row-link" href="{% url 'scoring:candidate_detail' s.pk %}">
+                      <span class="pii-real">{{ s.resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ s.resume.pk }}</span>
+                    </a>
+                    <span class="cell-sub"><span class="pii-real">{{ s.resume.candidate_email|default:"No email extracted" }}</span><span class="pii-mask">Email hidden</span></span>
+                  </td>
+                  <td>{{ s.resume.batch.batch_name }}</td>
+                  <td>
+                    <div class="score-cell">
+                      <span class="score-bar" role="img" aria-label="Score {{ s.total_score|floatformat:1 }} out of 100"><span style="width: {{ s.total_score|floatformat:'0u' }}%"></span></span>
+                      <span class="score-value">{{ s.total_score|floatformat:1 }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge--match-me">{{ s.met }} met</span>
+                    <span class="badge badge--match-pa">{{ s.partial }} partial</span>
+                    <span class="badge badge--match-mi">{{ s.missing }} missing</span>
+                  </td>
+                  <td><a class="link" href="{% url 'scoring:candidate_detail' s.pk %}">Breakdown</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% include '_pagination.html' %}
+      {% else %}
+        <div class="empty">
+          <h3>No candidates match “{{ q }}”</h3>
+          <p>Check the spelling or clear the search.</p>
+          <a class="btn btn--secondary" href="{% url 'search_history:detail' search.pk %}">Clear search</a>
+        </div>
+      {% endif %}
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

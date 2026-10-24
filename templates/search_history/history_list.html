@@ -1,0 +1,68 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Screenings{% endblock %}
+
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Screenings</h1>
+    <p class="page-subtext">Every time you score resumes against a requirement, the run is saved here so you can reopen its ranked results.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn--primary" href="{% url 'search_history:run' %}">Run screening</a>
+  </div>
+</header>
+
+<section class="panel panel--flush">
+  <form class="toolbar" method="get">
+    <label for="history-requirement">Requirement</label>
+    <select id="history-requirement" name="requirement">
+      <option value="">All requirements</option>
+      {% for req in requirements %}
+        <option value="{{ req.pk }}" {% if current_requirement == req.pk|stringformat:"s" %}selected{% endif %}>{{ req.title }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn--secondary btn--sm">Filter</button>
+  </form>
+
+  {% if page_obj.object_list %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">Requirement</th>
+            <th scope="col">Run on</th>
+            <th scope="col" class="num">Candidates scored</th>
+            <th scope="col">Status</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in page_obj %}
+            <tr>
+              <td><a class="row-link" href="{% url 'search_history:detail' s.pk %}">{{ s.job_requirement.title }}</a></td>
+              <td>{{ s.searched_at|date:"M j, Y" }}<span class="cell-sub">{{ s.searched_at|time:"g:i A" }}</span></td>
+              <td class="num">{{ s.scored_count }}</td>
+              <td>{% if s.scored_count %}<span class="badge badge--ok">Scored</span>{% else %}<span class="badge badge--warn">Awaiting scoring</span>{% endif %}</td>
+              <td><a class="link" href="{% url 'search_history:detail' s.pk %}">View results</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include '_pagination.html' %}
+  {% elif has_filters %}
+    <div class="empty">
+      <h3>No screenings for that requirement</h3>
+      <p>Pick another requirement or clear the filter.</p>
+      <a class="btn btn--secondary" href="{% url 'search_history:history' %}">Clear filter</a>
+    </div>
+  {% else %}
+    <div class="empty">
+      <h3>No screenings yet</h3>
+      <p>Choose a requirement and one or more resume batches to run your first screening.</p>
+      <a class="btn btn--primary" href="{% url 'search_history:run' %}">Run screening</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
