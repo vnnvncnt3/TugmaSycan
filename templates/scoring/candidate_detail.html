@@ -1,0 +1,70 @@
+{% extends 'base_app.html' %}
+{% load static %}
+{% block title %}Breakdown · Candidate #{{ score.resume.pk }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/scoring/scoring.css' %}">{% endblock %}
+
+{% block content %}
+<div data-fair-scope class="{% if fair_default %}fair-on{% endif %}">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <a href="{% url 'search_history:history' %}">Screenings</a><span aria-hidden="true">/</span>
+    <a href="{% url 'search_history:detail' score.search_history.pk %}">{{ score.job_requirement.title }}</a><span aria-hidden="true">/</span>
+    <span><span class="pii-real">{{ score.resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ score.resume.pk }}</span></span>
+  </nav>
+
+  <header class="page-head">
+    <div>
+      <h1><span><span class="pii-real">{{ score.resume.candidate_name }}</span><span class="pii-mask">Candidate #{{ score.resume.pk }}</span></span></h1>
+      <p class="page-subtext">Ranked {{ rank }} of {{ total_candidates }} for {{ score.job_requirement.title }}.</p>
+    </div>
+    <div class="page-actions">
+      <label class="switch" title="Hides names, emails and file names on this page">
+        <input type="checkbox" data-fair-toggle {% if fair_default %}checked{% endif %}>
+        <span class="switch-track" aria-hidden="true"></span>
+        <span>Fair Review</span>
+      </label>
+      <a class="btn btn--secondary" href="{% url 'resumes:resume_detail' score.resume.pk %}">View resume</a>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Score summary">
+    <div class="kpi"><p class="kpi-value">{{ score.total_score|floatformat:1 }}</p><p class="kpi-label">Total score</p></div>
+    <div class="kpi"><p class="kpi-value">{{ counts.met }}</p><p class="kpi-label">Criteria met</p></div>
+    <div class="kpi"><p class="kpi-value">{{ counts.partial }}</p><p class="kpi-label">Partially met</p></div>
+    <div class="kpi"><p class="kpi-value">{{ counts.missing }}</p><p class="kpi-label">Missing</p></div>
+  </section>
+
+  <section class="panel panel--flush" style="margin-top:24px" aria-labelledby="breakdown-title">
+    <div class="panel-head"><h2 class="panel-title" id="breakdown-title">Criterion breakdown</h2></div>
+    {% if items %}
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th scope="col">Type</th><th scope="col">Criterion</th><th scope="col">Required</th><th scope="col">Result</th></tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td><span class="badge">{{ item.criterion.get_criterion_type_display }}</span></td>
+                <td>{{ item.criterion.skill.skill_name }}{% if item.criterion.description %}<span class="cell-sub">{{ item.criterion.description }}</span>{% endif %}</td>
+                <td>{% if item.criterion.min_years %}{{ item.criterion.min_years }}+ year{{ item.criterion.min_years|pluralize }}{% else %}<span class="cell-sub">—</span>{% endif %}</td>
+                <td><span class="badge badge--match-{{ item.status|lower }}">{{ item.get_status_display }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty empty--inline">
+        <h3>No criterion results recorded</h3>
+        <p>This score has no per-criterion breakdown saved.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <nav class="pager-card" aria-label="Other candidates in this screening">
+    {% if previous_id %}<a class="btn btn--secondary btn--sm" href="{% url 'scoring:candidate_detail' previous_id %}">Previous candidate</a>{% else %}<span></span>{% endif %}
+    <a class="link" href="{% url 'search_history:detail' score.search_history.pk %}">Back to ranked results</a>
+    {% if next_id %}<a class="btn btn--secondary btn--sm" href="{% url 'scoring:candidate_detail' next_id %}">Next candidate</a>{% else %}<span></span>{% endif %}
+  </nav>
+</div>
+{% endblock %}
