@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/shared/components.css' %}">
   {% block extra_css %}{% endblock %}
+  <script>
+    /* Restore the rail's expanded state before first paint (desktop only). */
+    try { if (localStorage.getItem('tugmasycan.sidebar') === '1' && window.matchMedia('(min-width: 861px)').matches) document.documentElement.classList.add('nav-expanded'); } catch (e) {}
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>

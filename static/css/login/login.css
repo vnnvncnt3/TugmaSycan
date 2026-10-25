@@ -237,8 +237,11 @@ body {
 
 @media (max-width: 780px) {
   .auth-shell { flex-direction: column; }
-  .auth-visual { flex: none; padding: 40px 28px; }
-  .auth-form-panel { padding: 40px 24px; }
+  .auth-visual { flex: none; padding: 28px 24px; }
+  /* keep the headline, drop the long lists so the form is on screen straight away */
+  .auth-visual .checklist, .auth-visual .feature-row { display: none; }
+  .auth-visual .visual-content h1 { font-size: 24px; }
+  .auth-form-panel { padding: 32px 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

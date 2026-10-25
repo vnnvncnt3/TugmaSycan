@@ -1,116 +1,64 @@
+{% extends 'base_app.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Settings — TugmaSycan</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/user_settings/user_settings.css' %}">
-  <link rel="stylesheet" href="{% static 'css/shared/base.css' %}">
-</head>
-<body>
-  <div class="app-shell">
-    <aside class="icon-sidebar" id="iconSidebar">
-      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
+{% block title %}Settings{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/user_settings/user_settings.css' %}">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/user_settings/user_settings.js' %}" defer></script>{% endblock %}
 
-      <nav class="sidebar-nav">
-        <a href="{% url 'home:home' %}" class="sidebar-link">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></span>
-          <span class="sidebar-label">Home</span>
-        </a>
-        <a href="{% url 'dashboard:dashboard' %}" class="sidebar-link">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></span>
-          <span class="sidebar-label">Dashboard</span>
-        </a>
-        <a href="{% url 'user_profile:profile' %}" class="sidebar-link">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg></span>
-          <span class="sidebar-label">Profile</span>
-        </a>
-        <a href="{% url 'user_settings:settings' %}" class="sidebar-link sidebar-link--active">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></span>
-          <span class="sidebar-label">Settings</span>
-        </a>
-        <a href="{% url 'search_history:history' %}" class="sidebar-link">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>
-          <span class="sidebar-label">History</span>
-        </a>
-      </nav>
-
-      <form method="post" action="{% url 'login:logout' %}" class="sidebar-logout-form">
-        {% csrf_token %}
-        <button type="submit" class="sidebar-link sidebar-logout">
-          <span class="sidebar-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>
-          <span class="sidebar-label">Logout</span>
-        </button>
-      </form>
-    </aside>
-
-        <main class="app-main">
-      <h1>Settings</h1>
-      <p class="page-subtext">Control how TugmaSycan looks, notifies you, and defaults new screenings.</p>
-
-      <form method="post" class="settings-form">
-        {% csrf_token %}
-
-        <section class="panel">
-          <h2 class="panel-title">Appearance</h2>
-          <div class="setting-row">
-            <div class="setting-text">
-              <p class="setting-label">Dark mode</p>
-              <p class="setting-description">Applies immediately. Save to keep it for next time.</p>
-            </div>
-            <label class="toggle-switch">
-              {{ form.dark_mode }}
-              <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2 class="panel-title">Screening defaults</h2>
-          <div class="setting-row">
-            <div class="setting-text">
-              <p class="setting-label">Default to Fair Review mode</p>
-              <p class="setting-description">Start every new screening with identifying details hidden.</p>
-            </div>
-            <label class="toggle-switch">
-              {{ form.default_fair_review }}
-              <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
-          <div class="setting-row">
-            <div class="setting-text">
-              <p class="setting-label">Default export format</p>
-              <p class="setting-description">Format used when exporting a ranking.</p>
-            </div>
-            <div class="setting-control">{{ form.export_format }}</div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2 class="panel-title">Notifications</h2>
-          <div class="setting-row">
-            <div class="setting-text">
-              <p class="setting-label">Email notifications</p>
-              <p class="setting-description">Get notified by email when a screening finishes.</p>
-            </div>
-            <label class="toggle-switch">
-              {{ form.email_notifications }}
-              <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            </label>
-          </div>
-        </section>
-
-        <button type="submit" class="btn-primary">Save changes</button>
-      </form>
-    </main>
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Settings</h1>
+    <p class="page-subtext">Control how TugmaSycan looks, notifies you, and defaults new screenings.</p>
   </div>
+</header>
 
-  <script src="{% static 'js/user_settings/user_settings.js' %}" defer></script>
-  <script src="{% static 'js/shared/base.js' %}" defer></script>
-</body>
-</html>
+<form method="post" class="settings-form" novalidate>
+  {% csrf_token %}
+  {% for error in form.non_field_errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+
+  <section class="panel" aria-labelledby="appearance-title">
+    <h2 class="panel-title" id="appearance-title">Appearance</h2>
+    <div class="setting-row">
+      <div class="setting-text">
+        <label class="setting-label" for="{{ form.dark_mode.id_for_label }}">Dark mode</label>
+        <p class="setting-description">Previews on this page right away. App-wide dark mode is not available yet, so your choice is saved for later.</p>
+      </div>
+      <label class="switch">{{ form.dark_mode }}<span class="switch-track" aria-hidden="true"></span></label>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="defaults-title">
+    <h2 class="panel-title" id="defaults-title">Screening defaults</h2>
+    <div class="setting-row">
+      <div class="setting-text">
+        <label class="setting-label" for="{{ form.default_fair_review.id_for_label }}">Default to Fair Review mode</label>
+        <p class="setting-description">Start result and resume pages with names, emails and file names hidden.</p>
+      </div>
+      <label class="switch">{{ form.default_fair_review }}<span class="switch-track" aria-hidden="true"></span></label>
+    </div>
+    <div class="setting-row">
+      <div class="setting-text">
+        <label class="setting-label" for="{{ form.export_format.id_for_label }}">Default export format</label>
+        <p class="setting-description">Format used when exporting a ranking. Export is not available yet, so this is saved for later.</p>
+        {% for error in form.export_format.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+      </div>
+      <div class="setting-control">{{ form.export_format }}</div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="notify-title">
+    <h2 class="panel-title" id="notify-title">Notifications</h2>
+    <div class="setting-row">
+      <div class="setting-text">
+        <label class="setting-label" for="{{ form.email_notifications.id_for_label }}">Email notifications</label>
+        <p class="setting-description">Get notified by email when a screening finishes.</p>
+      </div>
+      <label class="switch">{{ form.email_notifications }}<span class="switch-track" aria-hidden="true"></span></label>
+    </div>
+  </section>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn--primary">Save changes</button>
+  </div>
+</form>
+{% endblock %}

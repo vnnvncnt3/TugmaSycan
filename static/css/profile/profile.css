@@ -1,25 +1,8 @@
-:root {
-  --slate-ink: #22303C;
-  --fog-white: #F5F6F7;
-  --steel-blue: #3F6C8C;
-  --slate-gray: #7C8B96;
-  --muted-gold: #B8935A;
-  --quiet-green: #4C7A5E;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: 'IBM Plex Sans', sans-serif;
-  color: var(--slate-ink);
-  background: var(--fog-white);
-}
-
+/* Same spacing and width as before, left-aligned inside the shared shell */
 .app-main {
-  flex: 1;
   padding: 48px 56px;
   max-width: 1200px;
+  margin: 0;
 }
 
 .app-main h1 { font-size: 24px; font-weight: 600; margin: 0 0 8px; }
@@ -163,21 +146,14 @@ body {
   border-radius: 4px;
 }
 
-.btn-primary {
-  padding: 11px 24px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--steel-blue);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-primary:hover { background: #345a76; }
-
 @media (max-width: 1000px) {
   .two-col { grid-template-columns: 1fr; }
   .app-main { padding: 32px 24px; }
 }
+
+/* Small overrides so the page matches its original look inside the shared shell */
+.form-col .panel + .panel { margin-top: 0; }
+.field > label { font-weight: 400; }
+
+/* Parts of the original button style that base.css does not set */
+.btn-primary { font-family: inherit; border: none; cursor: pointer; }

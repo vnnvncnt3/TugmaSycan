@@ -1,98 +1,35 @@
-:root {
-  --slate-ink: #22303C;
-  --fog-white: #F5F6F7;
-  --steel-blue: #3F6C8C;
-  --slate-gray: #7C8B96;
-  --muted-gold: #B8935A;
-  --quiet-green: #4C7A5E;
+/* Settings page. Buttons, panels, switches and page header come from shared/components.css. */
+/* Cards flow into two columns on wide screens and stack on narrow ones */
+.settings-form {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  gap: 24px; align-items: start; max-width: 1200px;
 }
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: 'IBM Plex Sans', sans-serif;
-  color: var(--slate-ink);
-  background: var(--fog-white);
-}
-
-.app-main { flex: 1; padding: 48px 56px; max-width: 820px; }
-
-.settings-form { display: flex; flex-direction: column; gap: 24px; align-items: flex-start; }
-
-.settings-form .panel { width: 100%; }
+.settings-form .panel + .panel { margin-top: 0; }
+.settings-form .form-actions, .settings-form > .field-error { grid-column: 1 / -1; margin-top: 0; }
 
 .setting-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(34, 48, 60, 0.08);
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 16px 0; border-bottom: 1px solid var(--line-soft);
 }
-
+.setting-row:first-of-type { padding-top: 0; }
 .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-.setting-label { font-size: 14px; font-weight: 500; margin: 0; }
-
-.setting-description { font-size: 13px; color: var(--slate-gray); margin: 4px 0 0; }
-
+.setting-text { min-width: 0; }
+.setting-label { display: block; font-size: 14px; font-weight: 500; margin: 0; cursor: pointer; }
+.setting-description { font-size: 13px; color: var(--slate-gray); margin: 4px 0 0; max-width: 54ch; text-wrap: pretty; }
+.setting-control { flex-shrink: 0; }
 .setting-control select {
-  padding: 8px 12px;
-  font-family: inherit;
-  font-size: 14px;
-  border: 1px solid var(--slate-gray);
-  border-radius: 4px;
-  background: white;
+  padding: 8px 12px; font: inherit; font-size: 14px; color: var(--slate-ink);
+  border: 1px solid var(--slate-gray); border-radius: 4px; background: #fff;
 }
 
-.toggle-switch { position: relative; display: inline-flex; cursor: pointer; flex-shrink: 0; }
-
-.toggle-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
-
-.toggle-track {
-  width: 40px; height: 22px;
-  background: var(--slate-gray);
-  border-radius: 11px;
-  position: relative;
-  transition: background 0.2s ease;
+@media (max-width: 560px) {
+  .setting-row { flex-wrap: wrap; align-items: flex-start; }
 }
 
-.toggle-thumb {
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 18px; height: 18px;
-  background: white;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-}
-
-.toggle-switch input:checked + .toggle-track { background: var(--steel-blue); }
-.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(18px); }
-
-/* Dark theme */
+/* Dark theme preview (this page only; see summary notes) */
 body.dark { background: #16212B; color: var(--fog-white); }
-body.dark .panel { background: #1E2B36; border-color: rgba(245,246,247,0.08); }
-body.dark .setting-description,
-body.dark .page-subtext { color: rgba(245,246,247,0.6); }
-body.dark .setting-row { border-color: rgba(245,246,247,0.08); }
-body.dark .setting-control select { background: #16212B; color: var(--fog-white); border-color: rgba(245,246,247,0.2); }
-
-.btn-primary {
-  padding: 11px 24px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--steel-blue);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 16px;
-}
-
-.btn-primary:hover { background: #345a76; }
-
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
-}
+body.dark .panel { background: #1E2B36; border-color: rgba(245, 246, 247, 0.08); }
+body.dark .page-head h1, body.dark .panel-title, body.dark .setting-label { color: var(--fog-white); }
+body.dark .setting-description, body.dark .page-subtext { color: rgba(245, 246, 247, 0.6); }
+body.dark .setting-row { border-color: rgba(245, 246, 247, 0.08); }
+body.dark .setting-control select { background: #16212B; color: var(--fog-white); border-color: rgba(245, 246, 247, 0.2); }

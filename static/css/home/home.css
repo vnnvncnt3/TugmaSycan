@@ -7,17 +7,26 @@
 
 .hero { display: flex; align-items: center; gap: 48px; max-width: 1100px; margin: 0 auto; padding: 72px 32px; }
 .hero-text { flex: 1; }
-.hero-text h1 { font-size: 36px; font-weight: 600; line-height: 1.25; margin: 0 0 20px; }
+.hero-text h1 { font-size: 36px; font-weight: 600; line-height: 1.25; margin: 0 0 20px; text-wrap: balance; }
 .hero-subtext { font-size: 15px; color: var(--slate-gray); line-height: 1.6; margin: 0 0 28px; max-width: 46ch; }
 .hero-visual { flex: 1; }
 
 .image-placeholder {
   width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: 8px;
+  border-radius: 10px;
   object-fit: cover;
   background: white;
 }
+/* Empty slot (a <div>): reads as a deliberate "screenshot goes here", not a blank box.
+   A real <img class="image-placeholder"> later keeps the plain style above. */
+div.image-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  padding: 16px; text-align: center; font-size: 14px; font-weight: 500; color: var(--slate-ink);
+  background: rgba(63, 108, 140, 0.05); border: 1.5px dashed rgba(124, 139, 150, 0.65);
+}
+div.image-placeholder::after { content: "Screenshot coming soon"; font-size: 12.5px; font-weight: 400; color: var(--slate-gray); }
+img.image-placeholder { border: 1px solid rgba(34, 48, 60, 0.1); box-shadow: 0 8px 24px rgba(34, 48, 60, 0.08); }
 
 .features { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
 
@@ -65,6 +74,13 @@
 .coming-soon-shell { max-width: 600px; margin: 0 auto; padding: 100px 24px; text-align: center; }
 .coming-soon-shell h1 { font-size: 24px; font-weight: 600; }
 .coming-soon-shell p { color: var(--slate-gray); font-size: 14px; }
+
+@media (max-width: 640px) {
+  .hero-text h1 { font-size: 28px; }
+  .hero-text h1 br { display: none; }   /* forced line break only suits wide screens */
+  .features { padding: 24px 20px 56px; }
+  .process, .tech-stack, .cta-band { padding-left: 20px; padding-right: 20px; }
+}
 
 @media (max-width: 780px) {
   .hero { flex-direction: column; padding: 48px 24px; }

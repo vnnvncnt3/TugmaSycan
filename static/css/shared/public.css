@@ -1,0 +1,12 @@
+/* Shared additions for the public pages (home, about, contact).
+   Load AFTER base.css. Nothing here touches the signed-in app. */
+
+/* The logo is dark artwork; show it as white on the dark top bar */
+.top-bar .brand-logo { filter: brightness(0) invert(1); }
+
+/* Keyboard focus that stays visible on the dark top bar and on light content */
+.top-bar a:focus-visible, .top-bar button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+main a:focus-visible, main button:focus-visible, main input:focus-visible, main textarea:focus-visible { outline: 2px solid var(--steel-blue); outline-offset: 2px; }
+
+/* <button class="btn-primary"> (e.g. Logout in the menu) keeps the browser's default border otherwise */
+button.btn-primary { border: none; cursor: pointer; font-family: inherit; }

@@ -1,3 +1,4 @@
+document.addEventListener('DOMContentLoaded', () => {
   // Scroll reveal
   const revealItems = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {

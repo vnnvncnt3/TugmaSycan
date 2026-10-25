@@ -16,18 +16,42 @@ document.addEventListener('DOMContentLoaded', () => {
   if (megaHost) {
     let closeTimer = null;
 
+    function syncAria(name) {
+      document.querySelectorAll('.nav-trigger').forEach((t) => t.setAttribute('aria-expanded', String(t.dataset.target === name)));
+    }
+
     function showPanel(name) {
       clearTimeout(closeTimer);
       megaHost.querySelectorAll('.mega-panel').forEach((p) => {
         p.classList.toggle('open', p.dataset.panel === name);
       });
+      syncAria(name);
     }
 
-    function scheduleHideAll() {
-      closeTimer = setTimeout(() => {
-        megaHost.querySelectorAll('.mega-panel').forEach((p) => p.classList.remove('open'));
-      }, 200);
+    function hideAll() {
+      megaHost.querySelectorAll('.mega-panel').forEach((p) => p.classList.remove('open'));
+      syncAria(null);
     }
+
+    // A click "pins" a panel open (hover alone only previews it); Esc, an outside click,
+    // or clicking the same button again closes it.
+    let pinned = null;
+
+    function scheduleHideAll() {
+      if (pinned) return;
+      closeTimer = setTimeout(hideAll, 200);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { pinned = null; hideAll(); }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!pinned) return;
+      if (e.target.closest('.nav-item') || e.target.closest('#megaHost')) return;
+      pinned = null;
+      hideAll();
+    });
 
     document.querySelectorAll('.nav-item').forEach((item) => {
       const trigger = item.querySelector('.nav-trigger');
@@ -36,8 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
       item.addEventListener('mouseleave', scheduleHideAll);
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
-        const panel = megaHost.querySelector(`[data-panel="${name}"]`);
-        panel.classList.contains('open') ? scheduleHideAll() : showPanel(name);
+        if (pinned === name) {
+          pinned = null;
+          hideAll();
+        } else {
+          pinned = name;
+          showPanel(name);
+        }
       });
     });
 

@@ -1,32 +1,36 @@
 /* TugmaSycan — shared behaviour for the signed-in app (base_app.html). */
 document.addEventListener('DOMContentLoaded', () => {
-  /* Sidebar: expand/collapse (remembered on desktop), drawer on mobile */
+  /* Sidebar: fixed rail. Desktop: expand/collapse (remembered). Mobile: slide-in drawer.
+     State lives on <html> (nav-expanded / nav-open); base_app.html sets nav-expanded
+     before first paint so the rail does not animate on every page load. */
+  const root = document.documentElement;
   const sidebar = document.getElementById('iconSidebar');
   const toggles = document.querySelectorAll('[data-sidebar-toggle]');
   const backdrop = document.querySelector('[data-sidebar-backdrop]');
   const mobile = window.matchMedia('(max-width: 860px)');
   const KEY = 'tugmasycan.sidebar';
+  const stateClass = () => (mobile.matches ? 'nav-open' : 'nav-expanded');
 
-  function setExpanded(open) {
-    if (!sidebar) return;
-    sidebar.classList.toggle('expanded', open);
-    document.body.classList.toggle('nav-open', open && mobile.matches);
+  function syncAria() {
+    const open = root.classList.contains(stateClass());
     toggles.forEach((b) => b.setAttribute('aria-expanded', String(open)));
+  }
+
+  function setOpen(open) {
+    root.classList.toggle(stateClass(), open);
     if (!mobile.matches) {
       try { localStorage.setItem(KEY, open ? '1' : '0'); } catch (e) { /* storage unavailable */ }
     }
+    syncAria();
   }
 
   if (sidebar) {
-    let initial = false;
-    if (!mobile.matches) {
-      try { initial = localStorage.getItem(KEY) === '1'; } catch (e) { /* ignore */ }
-    }
-    setExpanded(initial);
-    toggles.forEach((b) => b.addEventListener('click', () => setExpanded(!sidebar.classList.contains('expanded'))));
-    if (backdrop) backdrop.addEventListener('click', () => setExpanded(false));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mobile.matches) setExpanded(false); });
-    mobile.addEventListener('change', () => setExpanded(false));
+    root.classList.remove('nav-open');
+    syncAria();
+    toggles.forEach((b) => b.addEventListener('click', () => setOpen(!root.classList.contains(stateClass()))));
+    if (backdrop) backdrop.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && mobile.matches) setOpen(false); });
+    mobile.addEventListener('change', () => { root.classList.remove('nav-open'); syncAria(); });
   }
 
   /* Dropzone: show chosen files, flag unsupported or oversized ones */
