@@ -21,5 +21,6 @@ urlpatterns = [
     path('requirements/', include('apps.job_requirements.urls')),
     path('skills/', include('apps.skills.urls')),
     path('history/', include('apps.search_history.urls')),
+    path('scores/', include('apps.scoring.urls')),
     path('', include('apps.home.urls')),
 ]

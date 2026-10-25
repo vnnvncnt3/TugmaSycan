@@ -14,6 +14,7 @@
       <p class="page-subtext">Uploaded {{ batch.upload_at|date:"M j, Y" }} at {{ batch.upload_at|time:"g:i A" }}.</p>
     </div>
     <div class="page-actions">
+      <a class="btn btn--primary" href="{% url 'search_history:run' %}?batch={{ batch.pk }}">Screen this batch</a>
       <a class="btn btn--secondary" href="{% url 'resumes:upload' %}">Upload another batch</a>
       <form method="post" action="{% url 'resumes:batch_delete' batch.pk %}" data-confirm="Delete this batch and all of its resumes? This cannot be undone.">
         {% csrf_token %}

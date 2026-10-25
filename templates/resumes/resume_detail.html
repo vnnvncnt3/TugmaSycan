@@ -112,6 +112,7 @@
       </details>
     </div>
 
+    <div>
     <aside class="panel" aria-labelledby="overview-title">
       <h2 class="panel-title" id="overview-title">Overview</h2>
       <dl class="meta" style="grid-template-columns:1fr">
@@ -122,6 +123,25 @@
         <div><dt>Status</dt><dd>{{ resume.get_status_display }}</dd></div>
       </dl>
     </aside>
+
+    <section class="panel" aria-labelledby="scores-title">
+      <h2 class="panel-title" id="scores-title">Screening results</h2>
+      {% with scores=resume.candidate_scores.all %}
+        {% if scores %}
+          <ul class="entry-list">
+            {% for s in scores %}
+              <li class="entry">
+                <p class="entry-title"><a class="link" href="{% url 'scoring:candidate_detail' s.pk %}">{{ s.job_requirement.title }}</a></p>
+                <p class="entry-meta">Score {{ s.total_score|floatformat:1 }} · {{ s.scored_at|date:"M j, Y" }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="field-hint">Not scored in any screening yet.</p>
+        {% endif %}
+      {% endwith %}
+    </section>
+    </div>
   </div>
 </div>
 {% endblock %}
