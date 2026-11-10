@@ -55,10 +55,10 @@ def run_view(request):
         form = RunScreeningForm(request.user, request.POST)
         if form.is_valid():
             search = SearchHistory.objects.create(user=request.user, job_requirement=form.cleaned_data['requirement'])
-            score_batches(search, form.cleaned_data['batches'])  # STUB: see apps/scoring/services.py
+            scored = score_batches(search, form.cleaned_data['batches'])
             messages.success(
                 request,
-                'Screening saved to your history. Scoring is not connected yet, so no candidates were scored.',
+                f'Screening finished: {scored} candidate{"s" if scored != 1 else ""} scored.',
             )
             return redirect('search_history:detail', pk=search.pk)
         selected = set(request.POST.getlist('batches'))
@@ -81,7 +81,6 @@ def run_view(request):
         'selected': selected,
         'has_requirements': form.fields['requirement'].queryset.exists(),
     })
-
 
 @login_required
 def detail_view(request, pk):

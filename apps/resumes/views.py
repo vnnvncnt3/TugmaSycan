@@ -10,6 +10,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
+from apps.skills.models import Skill
+from .extraction import parse_resume
 from .forms import ALLOWED_EXTENSIONS, MAX_FILE_MB, MAX_FILES, UploadBatchForm
 from .models import Resume, ResumeBatch
 
@@ -75,23 +77,41 @@ def upload_view(request):
         form = UploadBatchForm(request.POST, request.FILES)
         if form.is_valid():
             files = form.cleaned_data['files']
+            skills = list(Skill.objects.all())
+            resumes = []
+            bad = 0
+            
             with transaction.atomic():
-                # STUB: batch stays 'Processing' and resumes stay 'Uploaded' until the
-                # extraction + scoring backend exists and updates their status.
                 batch = ResumeBatch.objects.create(user=request.user, batch_name=form.cleaned_data['batch_name'])
                 for f in files:
                     stored_path = default_storage.save(f'resumes/{request.user.pk}/{f.name}', f, max_length=255)
-                    Resume.objects.create(
+                    resume = Resume.objects.create(
                         batch=batch,
                         candidate_name=_guess_name(f.name),
                         candidate_email='',
                         file_path=stored_path,
                         status=Resume.Status.UPLOADED,
                     )
+                    resumes.append(resume)
+
+                for resume in resumes:
+                    parse_resume(resume, skills)
+                    resume.refresh_from_db(fields=['status'])
+                    if resume.status in [Resume.Status.REJECTED, Resume.Status.FAILED]:
+                        bad += 1
+
+                if bad == len(files):
+                    batch.status = ResumeBatch.Status.FAILED
+                elif bad > 0:
+                    batch.status = ResumeBatch.Status.PARTIALLY_FAILED
+                else:
+                    batch.status = ResumeBatch.Status.COMPLETED
+                batch.save(update_fields=['status'])
+
             messages.success(
                 request,
                 f'Saved {len(files)} resume{"s" if len(files) != 1 else ""} to "{batch.batch_name}". '
-                'Text extraction is not connected yet, so they stay in Uploaded status.',
+                f'{len(files) - bad} read successfully, {bad} need attention.',
             )
             return redirect('resumes:batch_detail', pk=batch.pk)
     else:
