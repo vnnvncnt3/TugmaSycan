@@ -1,7 +1,8 @@
-from decimal import Decimal
+﻿from decimal import Decimal
 from django.db import transaction
 from apps.job_requirements.models import RequirementCriterion
-from apps.resumes.models import Resume
+from apps.resumes.extraction import find_skills
+from apps.resumes.models import Resume, ResumeSkill
 from .models import CandidateScore, MatchBreakdown
 
 Status = MatchBreakdown.Status
@@ -13,12 +14,13 @@ POINTS = {
 
 def score_batches(search_history, batches):
     """Rule-based: Met = skill found in the resume. An Experience criterion with minimum years is only Partial, because years are not verified. total = (met + 0.5 * partial) / criteria * 100."""
-    criteria = list(search_history.job_requirement.criteria.all())
+    criteria = list(search_history.job_requirement.criteria.select_related("skill"))
     if not criteria:
         return 0
+    criteria_skills = [c.skill for c in criteria]
 
     resumes = Resume.objects.filter(
-        batch__in=batches, 
+        batch__in=batches,
         status__in=[Resume.Status.PARSED, Resume.Status.SCORED]
     ).prefetch_related("resume_skills")
 
@@ -26,8 +28,16 @@ def score_batches(search_history, batches):
     with transaction.atomic():
         for resume in resumes:
             have = {rs.skill_id for rs in resume.resume_skills.all()}
+
+            to_check = [s for s in criteria_skills if s.pk not in have]
+            found = find_skills(resume.raw_text, to_check)
+            if found:
+                ResumeSkill.objects.bulk_create(
+                    [ResumeSkill(resume=resume, skill=s) for s in found], ignore_conflicts=True
+                )
+                have |= {s.pk for s in found}
+
             rows, points = [], Decimal("0")
-            
             for c in criteria:
                 if c.skill_id not in have:
                     status = Status.MISSING
@@ -35,23 +45,23 @@ def score_batches(search_history, batches):
                     status = Status.PARTIAL
                 else:
                     status = Status.MET
-                
+
                 points += POINTS[status]
                 rows.append((c, status))
-            
+
             total = (points / len(criteria) * 100).quantize(Decimal("0.01"))
-            
+
             score = CandidateScore.objects.create(
                 resume=resume,
                 job_requirement=search_history.job_requirement,
                 search_history=search_history,
                 total_score=total,
             )
-            
+
             MatchBreakdown.objects.bulk_create(
                 MatchBreakdown(candidate_score=score, criterion=c, status=s) for c, s in rows
             )
-            
+
             Resume.objects.filter(pk=resume.pk).update(status=Resume.Status.SCORED)
             scored += 1
 
