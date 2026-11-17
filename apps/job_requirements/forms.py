@@ -46,6 +46,9 @@ class CriterionForm(forms.ModelForm):
         self.fields['criterion_type'].choices = [('', 'Select type')] + list(RequirementCriterion.CriterionType.choices)
         if self.instance.pk and self.instance.skill_id:
             self.fields['skill_name'].initial = self.instance.skill.skill_name
+        if self.instance.pk and self.instance.breakdown_items.exists():
+            for name in ('criterion_type', 'skill_name'):
+                self.fields[name].disabled = True
 
     def clean_skill_name(self):
         name = normalize_skill_name(self.cleaned_data['skill_name'])
