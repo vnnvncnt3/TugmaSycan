@@ -56,11 +56,14 @@ def run_view(request):
         if form.is_valid():
             search = SearchHistory.objects.create(user=request.user, job_requirement=form.cleaned_data['requirement'])
             scored = score_batches(search, form.cleaned_data['batches'])
-            messages.success(
-                request,
-                f'Screening finished: {scored} candidate{"s" if scored != 1 else ""} scored.',
-            )
-            return redirect('search_history:detail', pk=search.pk)
+            if scored:
+                messages.success(
+                    request,
+                    f'Screening finished: {scored} candidate{"s" if scored != 1 else ""} scored.',
+                )
+                return redirect('search_history:detail', pk=search.pk)
+            search.delete()
+            form.add_error('batches', 'None of the selected batches has a readable resume to score.')
         selected = set(request.POST.getlist('batches'))
     else:
         initial = {}

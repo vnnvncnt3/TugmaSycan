@@ -21,3 +21,9 @@ class RunScreeningForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields['requirement'].queryset = JobRequirement.objects.filter(user=user).order_by('title')
         self.fields['batches'].queryset = ResumeBatch.objects.filter(user=user)
+
+    def clean_requirement(self):
+        requirement = self.cleaned_data['requirement']
+        if not requirement.criteria.exists():
+            raise forms.ValidationError('This requirement has no criteria yet. Add at least one first.')
+        return requirement
