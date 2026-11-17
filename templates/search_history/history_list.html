@@ -43,7 +43,7 @@
               <td><a class="row-link" href="{% url 'search_history:detail' s.pk %}">{{ s.job_requirement.title }}</a></td>
               <td>{{ s.searched_at|date:"M j, Y" }}<span class="cell-sub">{{ s.searched_at|time:"g:i A" }}</span></td>
               <td class="num">{{ s.scored_count }}</td>
-              <td>{% if s.scored_count %}<span class="badge badge--ok">Scored</span>{% else %}<span class="badge badge--warn">Awaiting scoring</span>{% endif %}</td>
+              <td>{% if s.scored_count %}<span class="badge badge--ok">Scored</span>{% else %}<span class="badge badge--warn">No candidates scored</span>{% endif %}</td>
               <td><a class="link" href="{% url 'search_history:detail' s.pk %}">View results</a></td>
             </tr>
           {% endfor %}
