@@ -29,13 +29,6 @@
     <div class="kpi"><p class="kpi-value">{{ stats.attention }}</p><p class="kpi-label">Need attention</p></div>
   </section>
 
-  {% if batch.status == 'PR' %}
-    <div class="stub-note" style="margin-top:24px">
-      <strong>Placeholder</strong>
-      This batch is still marked Processing because extraction is not connected yet. Statuses will update automatically once it is.
-    </div>
-  {% endif %}
-
   <section class="panel panel--flush" style="margin-top:24px">
     <form class="toolbar" method="get" role="search">
       <div class="chip-row" role="group" aria-label="Filter by status">

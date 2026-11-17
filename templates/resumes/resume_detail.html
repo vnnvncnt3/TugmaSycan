@@ -29,12 +29,7 @@
     </div>
   </header>
 
-  {% if resume.status == resume.Status.UPLOADED %}
-    <div class="stub-note" style="margin-bottom:24px">
-      <strong>Placeholder</strong>
-      Extraction is not connected yet, so the sections below are empty. They will fill in once this resume is parsed.
-    </div>
-  {% elif resume.status == resume.Status.FAILED or resume.status == resume.Status.REJECTED %}
+  {% if resume.status == resume.Status.FAILED or resume.status == resume.Status.REJECTED %}
     <div class="stub-note" style="margin-bottom:24px">
       <strong>{{ resume.get_status_display }}</strong>
       This file could not be read. Scanned PDFs without a text layer are not supported.
@@ -65,7 +60,7 @@
             {% endfor %}
           </ul>
         {% else %}
-          <p class="field-hint">No experience extracted yet.</p>
+          <p class="field-hint">Not extracted. This version reads skills only.</p>
         {% endif %}
       </section>
 
@@ -81,7 +76,7 @@
             {% endfor %}
           </ul>
         {% else %}
-          <p class="field-hint">No education extracted yet.</p>
+          <p class="field-hint">Not extracted. This version reads skills only.</p>
         {% endif %}
       </section>
 
@@ -97,7 +92,7 @@
             {% endfor %}
           </ul>
         {% else %}
-          <p class="field-hint">No certifications extracted yet.</p>
+          <p class="field-hint">Not extracted. This version reads skills only.</p>
         {% endif %}
       </section>
 

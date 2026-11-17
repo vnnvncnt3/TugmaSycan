@@ -14,6 +14,7 @@ from apps.skills.models import Skill
 from .extraction import parse_resume
 from .forms import ALLOWED_EXTENSIONS, MAX_FILE_MB, MAX_FILES, UploadBatchForm
 from .models import Resume, ResumeBatch
+from apps.user_settings.utils import fair_review_default
 
 BATCH_PAGE_SIZE = 10
 RESUME_PAGE_SIZE = 20
@@ -24,12 +25,6 @@ def _querystring(request):
     params = request.GET.copy()
     params.pop('page', None)
     return params.urlencode()
-
-
-def _fair_review_default(user):
-    """User's saved Fair Review preference (False if they have no settings row yet)."""
-    return bool(getattr(getattr(user, 'usersettings', None), 'default_fair_review', False))
-
 
 def _guess_name(filename):
     # STUB: placeholder until text extraction fills in the real candidate name.
@@ -159,7 +154,7 @@ def batch_detail_view(request, pk):
         'q': q,
         'querystring': _querystring(request),
         'has_filters': bool(status or q),
-        'fair_default': _fair_review_default(request.user),
+        'fair_default': fair_review_default(request.user),
     })
 
 
@@ -186,5 +181,5 @@ def resume_detail_view(request, pk):
         'experience': resume.experience_entries.order_by(F('end_date').desc(nulls_first=True), '-start_date'),
         'education': resume.education_entries.order_by(F('end_date').desc(nulls_first=True), '-start_date'),
         'certifications': resume.certifications.order_by('-date_obtained'),
-        'fair_default': _fair_review_default(request.user),
+        'fair_default': fair_review_default(request.user),
     })

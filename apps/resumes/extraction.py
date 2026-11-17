@@ -17,7 +17,12 @@ def extract_text(stored_path):
         if ext == ".pdf":
             return "\n".join((page.extract_text() or "") for page in PdfReader(f).pages)
         if ext == ".docx":
-            return "\n".join(p.text for p in Document(f).paragraphs)
+            doc = Document(f)
+            parts = [p.text for p in doc.paragraphs]
+            for table in doc.tables:
+                for row in table.rows:
+                    parts.extend(cell.text for cell in row.cells)
+            return "\n".join(parts)
     return ""
 
 
